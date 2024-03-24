@@ -1,10 +1,10 @@
 import config from '../config.json' assert { type: 'json' }
-import ws from "ws"
+import WebSocket from "ws"
 
 
 const app = async () => {
   try{
-    ws = new WebSocket(`ws://${config.mainServer.host}:${config.mainServer.port}/ws`);
+    const ws = new WebSocket(`ws://${config.mainServer.host}:${config.mainServer.port}/ws`);
 
     ws.on('error', console.error);
     
