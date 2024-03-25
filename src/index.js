@@ -1,22 +1,16 @@
 import config from '../config.json' assert { type: 'json' }
-import WebSocket from "ws"
-
+import initAlarmApi from './api/initAlarmApi.js'
 
 const app = async () => {
-  try{
-    const ws = new WebSocket(`ws://${config.mainServer.host}:${config.mainServer.port}/ws`);
+  try {
+    const onAlarmMessage = (data) => {
+      console.log(JSON.parse(data.toString()))
+    }
 
-    ws.on('error', console.error);
-    
-    ws.on('open', function open() {
-      console.log('Open connection')
-    });
+    const alarmApi = initAlarmApi(config.mainServer)
+    alarmApi.subscribe('alarm', onAlarmMessage)
 
-    ws.on('message', function incoming(data) {
-      console.log('Received message from server:', data);
-  });
-
-  } catch(e) {
+  } catch (e) {
     console.log(e)
   }
 }
