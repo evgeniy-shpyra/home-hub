@@ -1,7 +1,13 @@
 {
   "mainServer": {
     "port": 3000,
-    "host": "localhost",
+    "host": "192.168.31.220",
     "token": "bb27f254-c6c2-44f6-a8b9-da39b9744bd9"
+  },
+  "mqttBroker": {
+    "port": 1883,
+    "host": "localhost",
+    "password": "",
+    "user": ""
   }
 }

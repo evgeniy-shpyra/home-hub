@@ -38,7 +38,6 @@ const initAlarmApi = (opt = {}) => {
       })
 
       ws.on('message', function incoming(data) {
-        console.log('Received message from server:', data)
         onMessage && onMessage(data)
       })
     },
