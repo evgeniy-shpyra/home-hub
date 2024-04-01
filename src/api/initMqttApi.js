@@ -30,6 +30,7 @@ const initMqttApi = (opt = {}) => {
         console.log("Recived message but cam't find a handler")
       });
 
+      console.log('Connected to mqtt')
     },
     stop: async () => {
       if(client){
