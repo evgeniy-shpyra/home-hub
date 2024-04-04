@@ -1,6 +1,6 @@
 {
   "mainServer": {
-    "port": 3000,
+    "port": 8080,
     "host": "localhost",
     "token": "bb27f254-c6c2-44f6-a8b9-da39b9744bd9"
   },
