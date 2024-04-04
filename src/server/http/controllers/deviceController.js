@@ -1,17 +1,16 @@
-import deviceService from '../../services/deviceService.js'
+import deviceService from '../../../services/deviceService.js'
 
-const deviceController = (dbHandlers) => {
-  const services = deviceService(dbHandlers)
-
+const deviceController = (services) => {
+  const deviceService = services.device
+  
   const create = ({ name }) => {
-    const deviceId = services.createDevice(name)
+    const deviceId = deviceService.createDevice(name)
     const payload = { isCreated: deviceId == !false }
     return { code: 200, payload }
   }
 
   const get = () => {
-    const payload = services.getAllDevises()
-
+    const payload = deviceService.getAllDevises()
     return { code: 200, payload }
   }
 

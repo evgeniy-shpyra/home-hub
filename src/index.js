@@ -8,34 +8,44 @@ import deviceControllerWs from './server/ws/controllers/deviceController.js'
 import deviceControllerHttp from './server/http/controllers/deviceController.js'
 import initWebsocket from './server/ws/wsServer.js'
 import actionController from './server/http/controllers/actionController.js'
+import Services from './services/index.js'
 
 const app = async () => {
   try {
-    // const mqtt = initMqttApi(config.mqttBroker)
-    // await mqtt.strat()
-
-    const onAlarmMessage = (dataBuffer) => {
-      const data = JSON.parse(dataBuffer.toString())
-      console.log(data)
-
-      // mqtt.publish('alarm', JSON.stringify(data), { qos: 2 })
-    }
-
-    const alarmApi = initAlarmApi(config.mainServer)
-    alarmApi.subscribe('alarm', onAlarmMessage)
-
     const db = initDb()
 
     const server = Server(config.server)
 
+    const services = Services(db.models)
+
     const httpControllers = {
-      device: deviceControllerHttp(db.models),
-      action: actionController(db.models),
+      device: deviceControllerHttp(services),
+      action: actionController(services),
     }
     await initHttp(server.server, httpControllers)
 
-    const wsControllers = { device: deviceControllerWs(db.models) }
-    await initWebsocket(server.server, wsControllers, db.models)
+    const wsControllers = {
+      device: deviceControllerWs(services),
+    }
+    const wsHandlers = await initWebsocket(server.server, wsControllers)
+
+    const onAlarmMessage = (dataBuffer) => {
+      const data = JSON.parse(dataBuffer.toString())
+      const dangerStatus = config.alarm.missileDangerStatus
+      if(data.statusId === dangerStatus){
+
+      }
+      else{
+        
+      }
+
+     
+
+      console.log(data)
+    }
+
+    const alarmApi = initAlarmApi(config.mainServer)
+    alarmApi.subscribe('alarm', onAlarmMessage)
 
     await server.start()
   } catch (e) {

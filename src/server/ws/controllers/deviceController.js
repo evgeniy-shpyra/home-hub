@@ -1,23 +1,21 @@
-import deviceService from '../../services/deviceService.js'
+const deviceController = (services) => {
+  const deviceService = services.device
 
-const deviceController = (dbHandlers) => {
-  const services = deviceService(dbHandlers)
   return {
-    verifyClient: ({ id }) => {
-      const device = services.getDeviceById(id)
+    verifyClient: ({ id }, handlers) => {
+      const device = deviceService.getDeviceById(id)
       return device ? true : false
     },
-    onConnect: async ({ id }) => {
-      services.setOnlineDevise(id)
-
+    onConnect: async ({ id }, handlers) => {
+      deviceService.setOnlineDevise(id)
     },
-    onClose: async ({ id }) => {
-      services.setOfflineDevise(id)
+    onClose: async ({ id }, handlers) => {
+      deviceService.setOfflineDevise(id)
     },
-    onMessage: async (data) => {
+    onMessage: async (data, handlers) => {
       console.log('onMessage', data)
     },
-    onError: async (data) => {
+    onError: async (data, handlers) => {
       console.log('onError', data)
     },
   }

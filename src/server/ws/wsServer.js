@@ -1,6 +1,10 @@
 import websocket from '@fastify/websocket'
 
 const initWebsocket = async (server, controllers) => {
+  const deviceController = controllers.device
+
+  const handlers = {}
+
   await server.register(websocket, {
     errorHandler: function (error, socket, req, reply) {
       socket.terminate()
@@ -14,7 +18,7 @@ const initWebsocket = async (server, controllers) => {
         if (url === '/ws/device') {
           const id = info.req.headers['id']?.split(' ') || []
           if (id.length)
-            isVerified = controllers.device.verifyClient({ id: id[0] })
+            isVerified = deviceController.verifyClient({ id: id[0] })
         }
 
         next(isVerified)
@@ -25,30 +29,34 @@ const initWebsocket = async (server, controllers) => {
   const deviceSubscribes = {}
 
   server.get('/ws/device', { websocket: true }, async (socket, request) => {
-    const { onConnect, onClose, onMessage, onError } = controllers.device
+    const { onConnect, onClose, onMessage, onError } = deviceController
     const id = request.headers['id'].split(' ')[0]
 
-    await onConnect({ id })
+    await onConnect({ id }, handlers)
 
     deviceSubscribes[id] = socket
 
     try {
       socket.on('message', async (message) => {
         const payload = message.toString()
-        await onMessage({ message: payload, id })
+        await onMessage({ message: payload, id }, handlers)
       })
 
       socket.on('close', async () => {
         deviceSubscribes[id] && delete deviceSubscribes[id]
-        await onClose({ id })
+        await onClose({ id }, handlers)
       })
     } catch (e) {
       console.log('Ws error', e)
-      await onError({ message: e.message })
+      await onError({ message: e.message }, handlers)
     }
   })
 
-  return
+  const sendDataToDevices = () => {}
+
+  handlers.device = sendDataToDevices
+
+  return handlers
 }
 
 export default initWebsocket

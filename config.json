@@ -13,5 +13,8 @@
   "server": {
     "port": 8000,
     "host": "localhost"
+  },
+  "alarm": {
+    "missileDangerStatus": 3
   }
 }
