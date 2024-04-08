@@ -12,7 +12,7 @@ const initAlarmApi = (opt = {}) => {
   }
 
   const headers = {
-    Authorization: `Bearer ${token}`,
+    Authorization: `Bearer ${token}`
   }
 
   const subscriptions = {}
@@ -20,7 +20,7 @@ const initAlarmApi = (opt = {}) => {
   return {
     subscribe: (route, onMessage) => {
       const ws = new WebSocket(`ws://${host}:${port}/${route}`, {
-        headers,
+        headers
       })
 
       if (subscriptions[route]) {
@@ -35,11 +35,11 @@ const initAlarmApi = (opt = {}) => {
         console.log('Ws proxy server error:', error)
       })
 
-      ws.on('open', function open() {
+      ws.on('open', function open () {
         console.log('Open connection')
       })
 
-      ws.on('message', function incoming(data) {
+      ws.on('message', function incoming (data) {
         onMessage && onMessage(data)
       })
     },
@@ -52,7 +52,7 @@ const initAlarmApi = (opt = {}) => {
       for (const route in subscriptions) {
         subscriptions[route] && (await subscriptions[route].close())
       }
-    },
+    }
   }
 }
 

@@ -1,11 +1,9 @@
-import actionService from '../../../services/actionService.js'
-
 const actionController = (services) => {
   const actionService = services.action
 
   return {
     get: () => {
-      const payload = actionService.getAllActions()
+      const payload = actionService.getAll()
       return { code: 200, payload }
     },
     addDeviseToActive: (data) => {
@@ -17,7 +15,7 @@ const actionController = (services) => {
       const id = actionService.addDeviseToInactive(data)
       const payload = { isCreated: id == !false }
       return { code: 200, payload }
-    },
+    }
   }
 }
 

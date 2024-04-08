@@ -1,11 +1,11 @@
 const actions = [
   { name: 'Повітряна загроза', isActive: 0 },
   { name: 'Радіаційна загроза', isActive: 0 },
-  { name: 'Хімічна загроза', isActive: 0 },
+  { name: 'Хімічна загроза', isActive: 0 }
 ]
 
 const devices = [
-  {id: 1, name: "Window", status: 1, isOnline: 0}
+  { id: 1, name: 'Window', status: 1, isOnline: 0 }
 ]
 
 const setupDb = (handlers) => {

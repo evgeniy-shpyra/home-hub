@@ -1,3 +1,10 @@
+export const checkFieldNames = (data, possibleFields) => {
+  for (const name in data) {
+    if (possibleFields[name] === undefined) return false
+  }
+  return true
+}
+
 export const buildInsertQuery = (tableName, data) => {
   const fields = []
   const values = []
@@ -10,7 +17,7 @@ export const buildInsertQuery = (tableName, data) => {
 
   return {
     query: `INSERT INTO ${tableName} (${fieldsStr}) VALUES (${valuesStr});`,
-    values,
+    values
   }
 }
 
@@ -23,8 +30,6 @@ export const buildSelectQuery = (tableName, opt = {}) => {
   };`
 
   return {
-    query,
+    query
   }
 }
-
-

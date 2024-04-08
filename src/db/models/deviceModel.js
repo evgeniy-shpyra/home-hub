@@ -31,8 +31,8 @@ const deviceModel = (db) => {
         return false
       }
     },
-    getAll: (fields = null) => {
-      const { query } = buildSelectQuery(tableName, { fields })
+    getAll: () => {
+      const { query } = buildSelectQuery(tableName)
       const data = db.prepare(query).all()
       return data
     },
@@ -44,17 +44,17 @@ const deviceModel = (db) => {
     setOnline: (isOnline, id) => {
       try {
         const query = db.prepare(
-          `UPDATE ${tableName} SET isOnline = ? WHERE id = ?;`
+          `UPDATE ${tableName} SET isOnline = ?, connectedAt = ? WHERE id = ?;`
         )
         db.transaction(() => {
-          const info = query.run(isOnline ? 1 : 0, id)
+          const info = query.run(isOnline ? 1 : 0, new Date().toISOString(), id)
           console.log({ info })
         })()
       } catch (e) {
         console.log(e)
         return false
       }
-    },  
+    },
     deleteAll: () => {
       const deleteQuery = db.prepare(`DELETE FROM ${tableName};`)
 
@@ -65,7 +65,7 @@ const deviceModel = (db) => {
       })()
 
       return changed
-    },
+    }
   }
 }
 

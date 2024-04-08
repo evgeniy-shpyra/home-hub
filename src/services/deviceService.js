@@ -2,29 +2,29 @@ const deviceService = (dbHandlers) => {
   const { Device, Action } = dbHandlers
 
   return {
-    getAllDevises: () => {
+    getAll: () => {
       const deices = Device.getAll()
       return deices
     },
-    getDeviceById: (id) => {
+    getById: (id) => {
       const device = Device.getById(id)
       return device
     },
-    createDevice: (name) => {
+    create: (name) => {
       const deviceData = {
-        name: name,
+        name,
         isOnline: 0,
-        status: 1,
+        status: 1
       }
       const id = Device.create(deviceData)
       return id
     },
-    setOnlineDevise: (id) => {
+    setOnline: (id) => {
       Device.setOnline(true, id)
-    }, 
-    setOfflineDevise: (id) => {
+    },
+    setOffline: (id) => {
       Device.setOnline(false, id)
-    } 
+    }
   }
 }
 

@@ -12,10 +12,10 @@ const actionService = (dbHandlers) => {
       const id = Action.addDeviceToInactive(deviceId, actionId)
       return id
     },
-    getAllActions: () => {
+    getAll: () => {
       const response = Action.select()
       return response
-    },
+    }
   }
 }
 

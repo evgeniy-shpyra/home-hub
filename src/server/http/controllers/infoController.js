@@ -1,20 +1,20 @@
-import deviceService from '../../../services/deviceService.js'
-
-const deviceController = (services) => {
+const infoController = (services) => {
   const deviceService = services.device
-  
-  const create = ({ name }) => {
-    const deviceId = deviceService.createDevice(name)
-    const payload = { isCreated: deviceId == !false }
-    return { code: 200, payload }
-  }
+  const actionService = services.action
 
   const get = () => {
-    const payload = deviceService.getAllDevises()
+    const devices = deviceService.getAll()
+    const actions = actionService.getAll()
+
+    const payload = {
+      devices,
+      actions
+    }
+
     return { code: 200, payload }
   }
 
-  return { create, get }
+  return { get }
 }
 
-export default deviceController
+export default infoController

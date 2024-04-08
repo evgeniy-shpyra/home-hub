@@ -86,7 +86,7 @@ const actionModel = (db) => {
         const createQuery = db.prepare(
           `INSERT INTO ${deviceActionInactiveTableName} (device_id, action_id) VALUES (?, ?);`
         )
-        console.log(deviceId, actionId)  
+        console.log(deviceId, actionId)
         let insertedId = null
         db.transaction(() => {
           const info = createQuery.run(deviceId, actionId)
@@ -96,9 +96,9 @@ const actionModel = (db) => {
         return insertedId
       } catch (e) {
         console.log(e)
-        return null  
+        return null
       }
-    },
+    }
   }
 }
 

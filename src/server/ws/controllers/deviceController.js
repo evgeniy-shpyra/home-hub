@@ -3,21 +3,21 @@ const deviceController = (services) => {
 
   return {
     verifyClient: ({ id }, handlers) => {
-      const device = deviceService.getDeviceById(id)
-      return device ? true : false
+      const device = deviceService.getById(id)
+      return !!device
     },
     onConnect: async ({ id }, handlers) => {
-      deviceService.setOnlineDevise(id)
+      deviceService.setOnline(id)
     },
     onClose: async ({ id }, handlers) => {
-      deviceService.setOfflineDevise(id)
+      deviceService.setOffline(id)
     },
     onMessage: async (data, handlers) => {
       console.log('onMessage', data)
     },
     onError: async (data, handlers) => {
       console.log('onError', data)
-    },
+    }
   }
 }
 

@@ -2,11 +2,12 @@
   "mainServer": {
     "port": 8000,
     "host": "localhost",
-    "token": "bc26efb9-9d14-4cf9-8ada-9ef7fa6a6c2d"
+    "token": "73d9c5c8-60a8-4dcd-9ac6-16c7246f92a9"
   },
   "server": {
     "port": 9000,
-    "host": "0.0.0.0"
+    "host": "0.0.0.0",
+    "cookieSecret": "my-secret"
   },
   "alarm": {
     "missileDangerStatus": 3
