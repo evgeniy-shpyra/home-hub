@@ -27,7 +27,6 @@ const initWebsocket = async (server, controllers) => {
   })
 
   const deviceSubscribes = {}
-
   server.get('/ws/device', { websocket: true }, async (socket, request) => {
     const { onConnect, onClose, onMessage, onError } = deviceController
     const id = request.headers['id'].split(' ')[0]

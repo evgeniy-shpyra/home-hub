@@ -23,6 +23,10 @@ const initHttp = async (server, controllers) => {
         handler: controllers.action.get,
         schema: null,
       },
+      info: {
+        handler: controllers.info.get,
+        schema: null,
+      }
     },
   }
 

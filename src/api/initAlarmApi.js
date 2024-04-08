@@ -31,7 +31,9 @@ const initAlarmApi = (opt = {}) => {
 
       subscriptions[route] = ws
 
-      ws.on('error', console.error)
+      ws.on('error', (error) => {
+        console.log('Ws proxy server error:', error)
+      })
 
       ws.on('open', function open() {
         console.log('Open connection')

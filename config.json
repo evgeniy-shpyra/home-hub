@@ -1,18 +1,12 @@
 {
   "mainServer": {
-    "port": 8080,
+    "port": 8000,
     "host": "localhost",
-    "token": "bb27f254-c6c2-44f6-a8b9-da39b9744bd9"
-  },
-  "mqttBroker": {
-    "port": 1883,
-    "host": "192.168.31.180",
-    "password": "",
-    "user": ""
+    "token": "bc26efb9-9d14-4cf9-8ada-9ef7fa6a6c2d"
   },
   "server": {
-    "port": 8000,
-    "host": "localhost"
+    "port": 9000,
+    "host": "0.0.0.0"
   },
   "alarm": {
     "missileDangerStatus": 3

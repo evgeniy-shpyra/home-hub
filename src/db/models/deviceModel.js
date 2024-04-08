@@ -54,6 +54,17 @@ const deviceModel = (db) => {
         console.log(e)
         return false
       }
+    },  
+    deleteAll: () => {
+      const deleteQuery = db.prepare(`DELETE FROM ${tableName};`)
+
+      let changed = null
+      db.transaction(() => {
+        const result = deleteQuery.run()
+        changed = result.changes
+      })()
+
+      return changed
     },
   }
 }

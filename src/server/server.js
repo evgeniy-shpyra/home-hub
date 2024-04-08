@@ -10,7 +10,7 @@ const server = (opt = {}) => {
     start: async () => {
       try {
         await fastify.listen({ port, host })
-        console.log(`Server running at the port: ${port}`)
+        console.log(`Server running at the port: ${host}:${port}`)
       } catch (err) {
         console.log('An error occurred while starting the server', err)
         process.exit(1)

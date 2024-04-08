@@ -10,8 +10,9 @@ const actionModel = (db) => {
     CREATE TABLE IF NOT EXISTS ${actionTableName} (
       id INTEGER PRIMARY KEY,
       isActive BOOLEAN NOT NULL,
+      lastActiveTime DATETIME,
       name TEXT NOT NULL
-    ) 
+    )  
   `)
 
   db.exec(`
