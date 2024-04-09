@@ -5,9 +5,9 @@ import initHttp from './server/http/httpServer.js'
 import Server from './server/server.js'
 import initHttpControllers from './server/http/controllers/index.js'
 import initWebsocket from './server/ws/wsServer.js'
-import actionController from './server/http/controllers/actionController.js'
 import Services from './services/index.js'
 import initWsControllers from './server/ws/controllers/index.js'
+
 
 const app = async () => {
   try {
@@ -21,18 +21,20 @@ const app = async () => {
     const wsControllers = initWsControllers(services)
     const wsHandlers = await initWebsocket(server.server, wsControllers)
 
-    const onAlarmMessage = (dataBuffer) => {
+    const onMissileThreatMessage = (dataBuffer) => {
+      const actionId = 'missileThreat'
+      const sendDataToUsers = wsHandlers.user
+
       const data = JSON.parse(dataBuffer.toString())
       const dangerStatus = config.alarm.missileDangerStatus
-      if (data.statusId === dangerStatus) {
-      } else {
-      }
+
+      const isAlarm = data.statusId === dangerStatus
 
       console.log(data)
     }
 
     const alarmApi = initAlarmApi(config.mainServer)
-    alarmApi.subscribe('alarm', onAlarmMessage)
+    alarmApi.subscribe('alarm', onMissileThreatMessage)
 
     await server.start()
   } catch (e) {

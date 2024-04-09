@@ -8,8 +8,8 @@ const actionModel = (db) => {
 
   db.exec(`
     CREATE TABLE IF NOT EXISTS ${actionTableName} (
-      id INTEGER PRIMARY KEY,
-      isActive BOOLEAN NOT NULL,
+      id VARCHAR(40) PRIMARY KEY,
+      status BOOLEAN NOT NULL,
       lastActiveTime DATETIME,
       name TEXT NOT NULL
     )  
@@ -17,7 +17,7 @@ const actionModel = (db) => {
 
   db.exec(`
     CREATE TABLE IF NOT EXISTS ${deviceActionActiveTableName} (
-      action_id INTEGER,
+      action_id VARCHAR(40),
       device_id INTEGER,
       FOREIGN KEY (action_id) REFERENCES ${actionTableName}(id) ON DELETE CASCADE,
       FOREIGN KEY (device_id) REFERENCES ${deviceTableName}(id) ON DELETE CASCADE,
@@ -26,7 +26,7 @@ const actionModel = (db) => {
   `)
   db.exec(`
     CREATE TABLE IF NOT EXISTS ${deviceActionInactiveTableName} (
-      action_id INTEGER,
+      action_id VARCHAR(40),
       device_id INTEGER,
       FOREIGN KEY (action_id) REFERENCES ${actionTableName}(id) ON DELETE CASCADE,
       FOREIGN KEY (device_id) REFERENCES ${deviceTableName}(id) ON DELETE CASCADE,
@@ -36,33 +36,62 @@ const actionModel = (db) => {
 
   return {
     create: (data) => {
-      const { query, values } = buildInsertQuery(actionTableName, data)
-      const createQuery = db.prepare(query)
+      try {
+        const { query, values } = buildInsertQuery(actionTableName, data)
+        const createQuery = db.prepare(query)
 
-      let insertedId = null
-      db.transaction(() => {
-        const info = createQuery.run(...values)
+        let insertedId = null
+        db.transaction(() => {
+          const info = createQuery.run(...values)
 
-        insertedId = info.lastInsertRowid
-      })()
+          insertedId = info.lastInsertRowid
+        })()
 
-      return insertedId
+        return insertedId
+      } catch (e) {
+        console.log(e)
+        return false
+      }
     },
     select: (fields = null) => {
-      const { query } = buildSelectQuery(actionTableName, { fields })
-      const data = db.prepare(query).all()
-      return data
+      try {
+        const { query } = buildSelectQuery(actionTableName, { fields })
+        const data = db.prepare(query).all()
+        return data
+      } catch (e) {
+        console.log(e)
+        return false
+      }
     },
     deleteAll: () => {
-      const deleteQuery = db.prepare(`DELETE FROM ${actionTableName};`)
+      try {
+        const deleteQuery = db.prepare(`DELETE FROM ${actionTableName};`)
 
-      let changed = null
-      db.transaction(() => {
-        const result = deleteQuery.run()
-        changed = result.changes
-      })()
+        let changed = null
+        db.transaction(() => {
+          const result = deleteQuery.run()
+          changed = result.changes
+        })()
 
-      return changed
+        return changed
+      } catch (e) {
+        console.log(e)
+        return false
+      }
+    },
+    updateStatus: (id, status) => {
+      try {
+        const query = `UPDATE ${actionTableName} SET status = ? WHERE id = ?;`
+        db.transaction(() => {
+          const info = query.run(id, status)
+          console.log({ info })
+        })()
+
+        return true
+      } catch (e) {
+        console.log(e)
+        return false
+      }
     },
     addDeviceToActive: (deviceId, actionId) => {
       try {
@@ -98,7 +127,7 @@ const actionModel = (db) => {
         console.log(e)
         return null
       }
-    }
+    },
   }
 }
 

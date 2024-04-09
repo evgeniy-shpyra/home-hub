@@ -1,12 +1,6 @@
-const actions = [
-  { name: 'Повітряна загроза', isActive: 0 },
-  { name: 'Радіаційна загроза', isActive: 0 },
-  { name: 'Хімічна загроза', isActive: 0 }
-]
+import { actions } from '../constantsData/actions.js'
 
-const devices = [
-  { id: 1, name: 'Window', status: 1, isOnline: 0 }
-]
+const devices = [{ id: 1, name: 'Window', status: 1, isOnline: 0 }]
 
 const setupDb = (handlers) => {
   const { Action, Device } = handlers
@@ -15,8 +9,8 @@ const setupDb = (handlers) => {
   if (allActions.length !== actions.length) {
     Action.deleteAll()
     for (const action of actions) {
-      const { isActive, name } = action
-      Action.create({ name, isActive })
+      const { id, name } = action
+      Action.create({ name, id, status: 0 })
     }
   }
 

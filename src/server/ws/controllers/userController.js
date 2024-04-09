@@ -6,8 +6,12 @@ const userController = (services) => {
       const { isAuth } = userService.isAuth(uuid)
       return isAuth
     },
-    onConnect: async ({ id }, handlers) => {},
-    onClose: async ({ id }, handlers) => {},
+    onConnect: async (data, handlers) => {
+      console.log('User connected')
+    },
+    onClose: async (data, handlers) => {
+      console.log('User unconnected')
+    },
     onMessage: async (data, handlers) => {
       console.log('onMessage', data)
     },

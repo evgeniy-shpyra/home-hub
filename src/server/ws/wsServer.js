@@ -68,7 +68,7 @@ const initWebsocket = async (server, controllers) => {
 
       socket.on('message', async (message) => {
         const payload = message.toString()
-        await onMessage({ message: payload, id }, handlers)
+        await onMessage({ message: payload, uuid }, handlers)
       })
 
       socket.on('close', async () => {
@@ -82,7 +82,9 @@ const initWebsocket = async (server, controllers) => {
     }
   })
 
-  const sendDataToUsers = () => {}
+  const sendDataToUsers = (uuid = []) => {
+    
+  }
 
   handlers.device = sendDataToDevices
   handlers.user = sendDataToUsers

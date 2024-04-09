@@ -2,6 +2,9 @@ const actionService = (dbHandlers) => {
   const { Device, Action } = dbHandlers
 
   return {
+    updateActionStatus: (is, isActive) => {
+      
+    },
     addDeviseToActive: (data) => {
       const { deviceId, actionId } = data
       const id = Action.addDeviceToActive(deviceId, actionId)

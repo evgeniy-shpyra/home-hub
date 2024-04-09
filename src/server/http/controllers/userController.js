@@ -1,12 +1,16 @@
 const userController = (services) => {
   const userService = services.user
   return {
-    getUser: (body, user = {}) => {
-      // const authData = userService.auth()
+    getUser: (body, user) => {
+      const payload = {}
 
-      // return { code: 200, cookie: replyCookie }
-      return { code: 200, payload: user }
-    }
+      if (user) {
+        payload.id = user.uuid
+        payload.login = user.login
+      }
+
+      return { code: 200, payload }
+    },
   }
 }
 

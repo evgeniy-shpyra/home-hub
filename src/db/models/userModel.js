@@ -22,7 +22,7 @@ const userModel = (db) => {
       ${fields.password} VARCHAR(100) NOT NULL,
       ${fields.login} VARCHAR(30) NOT NULL,
       ${fields.isOnline} BOOLEAN NOT NULL,
-      ${fields.lastOnlineTime} DATETIME NOT NULL
+      ${fields.lastOnlineTime} DATETIME
     )  
   `)
 
