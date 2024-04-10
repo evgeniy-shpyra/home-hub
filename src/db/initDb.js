@@ -4,6 +4,7 @@ import actionModel from './models/actionModel.js'
 import setupDb from './setupDb.js'
 import userModel from './models/userModel.js'
 
+
 const initDb = () => {
   const db = new Database('home.db')
 
@@ -19,7 +20,7 @@ const initDb = () => {
     close: () => {
       db.close()
     },
-    models
+    models,
   }
 }
 

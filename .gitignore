@@ -1,4 +1,5 @@
 *.db*
+home.db
 logs
 *.log
 npm-debug.log*

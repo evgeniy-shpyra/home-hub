@@ -1,0 +1,12 @@
+version: '3.9'
+name: 'home_hub'
+
+services:
+  home_hub:
+    container_name: home_hub
+    build: ../
+    # restart: always 
+    volumes:
+      - ./home.db:/data/home.db
+    ports:
+      - '9000:9000'
