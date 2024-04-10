@@ -26,10 +26,8 @@ const app = async () => {
       const sendDataToUsers = wsHandlers.user
 
       const data = JSON.parse(dataBuffer.toString())
-      const dangerStatus = config.alarm.missileDangerStatus
-
-      const isAlarm = data.statusId === dangerStatus
-
+      
+      const isAlarm = data.isDanger
       console.log(data)
     }
 
