@@ -3,7 +3,7 @@ import deviceModel from './models/deviceModel.js'
 import actionModel from './models/actionModel.js'
 import setupDb from './setupDb.js'
 import userModel from './models/userModel.js'
-
+import sensorModel from './models/sensorsModel.js'
 
 const initDb = () => {
   const db = new Database('home.db')
@@ -11,8 +11,9 @@ const initDb = () => {
   const Device = deviceModel(db)
   const Action = actionModel(db)
   const User = userModel(db)
+  const Sensor = sensorModel(db)
 
-  const models = { Device, Action, User }
+  const models = { Device, Action, User, Sensor }
 
   setupDb(models)
 

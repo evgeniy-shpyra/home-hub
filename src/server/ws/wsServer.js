@@ -3,6 +3,7 @@ import crypto from 'node:crypto'
 const initWebsocket = async (server, controllers) => {
   const deviceController = controllers.device
   const userController = controllers.user
+  const sensorController = controllers.sensor
 
   const handlers = {}
 
@@ -16,23 +17,31 @@ const initWebsocket = async (server, controllers) => {
         const url = info.req.url
         let isVerified = false
 
-        if (url === '/ws/device') {
-          const id = info.req.headers.id?.split(' ') || []
-          if (id.length) { isVerified = deviceController.verifyClient({ id: id[0] }) }
-        } else if (url === '/ws/user') {
+        if (url === '/ws/user') {
           const id = info.req.headers.id
           isVerified = userController.verifyClient({ id })
+        } else if (url === '/ws/sensor') {
+          const id = info.req.headers.id
+          const password = info.req.headers.password
+          if (id && password) {
+            isVerified = sensorController.verifyClient({ id, password })
+          }
+        } else if (url === '/ws/device') {
+          const id = info.req.headers.id
+          const password = info.req.headers.password
+          if (id && password) {
+            isVerified = deviceController.verifyClient({ id, password })
+          }
         }
-
         next(isVerified)
-      }
-    }
+      },
+    },
   })
 
   const deviceSubscribes = {}
   server.get('/ws/device', { websocket: true }, async (socket, request) => {
     const { onConnect, onClose, onMessage, onError } = deviceController
-    const id = request.headers.id.split(' ')[0]
+    const id = request.headers.id
 
     await onConnect({ id }, handlers)
 
@@ -81,10 +90,37 @@ const initWebsocket = async (server, controllers) => {
       await onError({ message: e.message }, handlers)
     }
   })
-
-  const sendDataToUsers = (uuid = []) => {
-    
+  const sendDataToUsers = (data) => {
+    for (const key in userSubscribes) {
+      userSubscribes[key].send(JSON.stringify(data))
+    }
   }
+
+  const sensorSubscribes = {}
+  server.get('/ws/sensor', { websocket: true }, async (socket, request) => {
+    const { onConnect, onClose, onMessage, onError } = sensorController
+    try {
+      const id = request.headers.id
+
+      const sensorData = onConnect({ id }, handlers)
+
+      sensorSubscribes[id] = socket
+
+      socket.on('message', async (message) => {
+        const payload = message.toString()
+        onMessage({ message: payload, sensorData }, handlers)
+      })
+
+      socket.on('close', async () => {
+        sensorSubscribes[subscribersUuid] &&
+          delete sensorSubscribes[subscribersUuid]
+        onClose({ uuid }, handlers)
+      })
+    } catch (e) {
+      console.log('Ws error', e)
+      onError({ message: e.message }, handlers)
+    }
+  })
 
   handlers.device = sendDataToDevices
   handlers.user = sendDataToUsers

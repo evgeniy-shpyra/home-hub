@@ -1,7 +1,8 @@
 import { buildInsertQuery, buildSelectQuery } from '../../utils/queryCreator.js'
 
-const deviceModel = (db) => {
-  const tableName = 'devices'
+const sensorModel = (db) => {
+  const tableName = 'sensors'
+  const actionTableName = 'actions'
 
   db.exec(`
     CREATE TABLE IF NOT EXISTS ${tableName} (
@@ -9,8 +10,9 @@ const deviceModel = (db) => {
       name TEXT UNIQUE NOT NULL,
       password VARCHAR(64) NOT NULL,
       isOnline BOOLEAN NOT NULL,
-      status BOOLEAN NOT NULL,
-      connectedAt DATETIME
+      action_id VARCHAR(40) NOT NULL,
+      connectedAt DATETIME,
+      FOREIGN KEY (action_id) REFERENCES ${actionTableName}(id) ON DELETE CASCADE
     )  
   `)
 
@@ -37,14 +39,16 @@ const deviceModel = (db) => {
       const data = db.prepare(query).all()
       return data
     },
-    getByIdAndPassword: (id, password) => {
-      
-      const query = `SELECT * FROM ${tableName} WHERE id = ? AND password = ?;`
-      const data = db.prepare(query).get(id, password)
-     
+    getById: (id) => {
+      const query = `SELECT * FROM ${tableName} WHERE id = ?;`
+      const data = db.prepare(query).get(id)
       return data
     },
-
+    getByIdAndPassword: (id, password) => {
+      const query = `SELECT * FROM ${tableName} WHERE id = ? AND password = ?;`
+      const data = db.prepare(query).get(id, password)
+      return data
+    },
     setOnline: (isOnline, id) => {
       try {
         const query = db.prepare(
@@ -69,8 +73,8 @@ const deviceModel = (db) => {
       })()
 
       return changed
-    },
+    }
   }
 }
 
-export default deviceModel
+export default sensorModel

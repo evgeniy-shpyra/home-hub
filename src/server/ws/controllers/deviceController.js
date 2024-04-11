@@ -1,10 +1,15 @@
+import { createHash } from '../../../utils/hash.js'
+
 const deviceController = (services) => {
   const deviceService = services.device
 
   return {
-    verifyClient: ({ id }, handlers) => {
-      const device = deviceService.getById(id)
-      return !!device
+    verifyClient: ({ id, password }, handlers) => {
+      const passwordHash = createHash(password)
+      console.log(passwordHash)
+      const isVerified = deviceService.isVerified(id, passwordHash)
+
+      return isVerified
     },
     onConnect: async ({ id }, handlers) => {
       deviceService.setOnline(id)
@@ -17,7 +22,7 @@ const deviceController = (services) => {
     },
     onError: async (data, handlers) => {
       console.log('onError', data)
-    }
+    },
   }
 }
 

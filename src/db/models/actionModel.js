@@ -81,10 +81,11 @@ const actionModel = (db) => {
     },
     updateStatus: (id, status) => {
       try {
-        const query = `UPDATE ${actionTableName} SET status = ? WHERE id = ?;`
+        const query = db.prepare(
+          `UPDATE ${actionTableName} SET status = ? WHERE id = ?;`
+        )
         db.transaction(() => {
           const info = query.run(id, status)
-          console.log({ info })
         })()
 
         return true
