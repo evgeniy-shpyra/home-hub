@@ -17,20 +17,22 @@ const actionModel = (db) => {
 
   db.exec(`
     CREATE TABLE IF NOT EXISTS ${deviceActionActiveTableName} (
+      id INTEGER PRIMARY KEY,
       action_id VARCHAR(40),
       device_id INTEGER,
       FOREIGN KEY (action_id) REFERENCES ${actionTableName}(id) ON DELETE CASCADE,
       FOREIGN KEY (device_id) REFERENCES ${deviceTableName}(id) ON DELETE CASCADE,
-      PRIMARY KEY (action_id, device_id)
+      CONSTRAINT unique_action_device UNIQUE (action_id, device_id)
     )
   `)
   db.exec(`
     CREATE TABLE IF NOT EXISTS ${deviceActionInactiveTableName} (
+      id INTEGER PRIMARY KEY,
       action_id VARCHAR(40),
       device_id INTEGER,
       FOREIGN KEY (action_id) REFERENCES ${actionTableName}(id) ON DELETE CASCADE,
       FOREIGN KEY (device_id) REFERENCES ${deviceTableName}(id) ON DELETE CASCADE,
-      PRIMARY KEY (action_id, device_id)
+      CONSTRAINT unique_action_device UNIQUE (action_id, device_id)
     )
   `)
 
@@ -85,7 +87,7 @@ const actionModel = (db) => {
           `UPDATE ${actionTableName} SET status = ? WHERE id = ?;`
         )
         db.transaction(() => {
-          const info = query.run(id, status)
+          const info = query.run(status, id)
         })()
 
         return true

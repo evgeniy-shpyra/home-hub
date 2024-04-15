@@ -1,8 +1,38 @@
 import { actions } from '../constantsData/actions.js'
 import { createHash } from '../utils/hash.js'
 
-const devices = [{ id: 1, name: 'Window', password: createHash("111"), isOnline: 0, status: 0 }]
-const sensors = [{ id: 1, name: 'Датчик газів', password: createHash("111"), isOnline: 0, action_id: "chemicalThreat" }]
+const devices = [
+  {
+    id: 1,
+    name: 'Window',
+    password: createHash('111'),
+    isOnline: 0,
+    status: 0,
+  },
+  {
+    id: 2,
+    name: 'Door',
+    password: createHash('111'),
+    isOnline: 0,
+    status: 0,
+  },
+  {
+    id: 3,
+    name: 'Door2',
+    password: createHash('111'),
+    isOnline: 0,
+    status: 0,
+  },
+]
+const sensors = [
+  {
+    id: 1,
+    name: 'Датчик газів',
+    password: createHash('111'),
+    isOnline: 0,
+    action_id: 'chemicalThreat',
+  },
+]
 
 const setupDb = (handlers) => {
   const { Action, Device, Sensor } = handlers
@@ -24,14 +54,16 @@ const setupDb = (handlers) => {
     }
   }
 
-  Action.addDeviceToActive(1, "missileThreat")
-
   const allSensors = Sensor.getAll()
   if (allSensors.length !== sensors.length) {
     Sensor.deleteAll()
     for (const sensor of sensors) {
       Sensor.create(sensor)
     }
+
+    Action.addDeviceToActive(1, 'missileThreat')
+    Action.addDeviceToActive(2, 'missileThreat')
+    Action.addDeviceToActive(3, 'missileThreat')
   }
 }
 

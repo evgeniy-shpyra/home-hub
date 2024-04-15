@@ -62,7 +62,15 @@ const initWebsocket = async (server, controllers) => {
       await onError({ message: e.message }, handlers)
     }
   })
-  const sendDataToDevices = () => {}
+  const sendDataToDevices = (data, ids = null) => {
+    for (const key in deviceSubscribes) {
+      if (ids) {
+        if (ids.includes(+key)) deviceSubscribes[key].send(JSON.stringify(data))
+      } else {
+        deviceSubscribes[key].send(JSON.stringify(data))
+      }
+    }
+  }
 
   const userSubscribes = {}
   server.get('/ws/user', { websocket: true }, async (socket, request) => {
@@ -121,9 +129,12 @@ const initWebsocket = async (server, controllers) => {
       onError({ message: e.message }, handlers)
     }
   })
+  const sendDataToSensors = (data) => {
+  }
 
   handlers.device = sendDataToDevices
   handlers.user = sendDataToUsers
+  handlers.sensor = sendDataToSensors
 
   return handlers
 }
