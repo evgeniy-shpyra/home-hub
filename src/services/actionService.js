@@ -15,6 +15,14 @@ const actionService = (dbHandlers) => {
       const id = Action.addDeviceToInactive(deviceId, actionId)
       return id
     },
+    getStatusById: (id) => {
+      const response = Action.selectStatusById(id)
+      return response == 1 ? true : false 
+    },
+    getActive: () => {
+      const response = Action.selectActive()
+      return response
+    },
     getAll: () => {
       const response = Action.select()
       return response

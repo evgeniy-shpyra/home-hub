@@ -61,9 +61,12 @@ const setupDb = (handlers) => {
       Sensor.create(sensor)
     }
 
-    Action.addDeviceAction(1, 'missileThreat', 1)
-    Action.addDeviceAction(2, 'missileThreat', 1)
-    Action.addDeviceAction(3, 'missileThreat', 1)
+    
+    Action.addDeviceAction({deviceId: 1, actionId: 'missileThreat', status: 0, priority: 1})
+    Action.addDeviceAction({deviceId: 2, actionId: 'missileThreat', status: 0, priority: 1})
+    Action.addDeviceAction({deviceId: 3, actionId: 'missileThreat', status: 0, priority: 1})
+    Action.addDeviceAction({deviceId: 3, actionId: 'radiationThreat', status: 0, priority: 3})
+    Action.addDeviceAction({deviceId: 3, actionId: 'chemicalThreat', status: 0, priority: 3})
   }
 }
 

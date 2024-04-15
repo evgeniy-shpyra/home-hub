@@ -2,6 +2,7 @@ import { createHash } from '../../../utils/hash.js'
 
 const deviceController = (services) => {
   const deviceService = services.device
+  const actionService = services.action
 
   return {
     verifyClient: ({ id, password }, handlers) => {
@@ -11,6 +12,9 @@ const deviceController = (services) => {
     },
     onConnect: async ({ id }, handlers) => {
       deviceService.setOnline(id)
+
+      const activeActions = actionService.getActive()
+      console.log(activeActions)
     },
     onClose: async ({ id }, handlers) => {
       deviceService.setOffline(id)

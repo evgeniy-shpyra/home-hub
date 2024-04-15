@@ -20,6 +20,7 @@ const actionModel = (db) => {
       action_id VARCHAR(40),
       device_id INTEGER,
       status BOOLEAN NOT NULL,
+      priority INTEGER NOT NULL,
       FOREIGN KEY (action_id) REFERENCES ${actionTableName}(id) ON DELETE CASCADE,
       FOREIGN KEY (device_id) REFERENCES ${deviceTableName}(id) ON DELETE CASCADE,
       CONSTRAINT unique_action_device UNIQUE (action_id, device_id, status)
@@ -49,6 +50,26 @@ const actionModel = (db) => {
     select: (fields = null) => {
       try {
         const { query } = buildSelectQuery(actionTableName, { fields })
+        const data = db.prepare(query).all()
+        return data
+      } catch (e) {
+        console.log(e)
+        return false
+      }
+    },
+    selectStatusById: (id) => {
+      try {
+        const query = `SELECT status FROM ${actionTableName} WHERE id = ?;`
+        const data = db.prepare(query).get(id)
+        return data
+      } catch (e) {
+        console.log(e)
+        return false
+      }
+    },
+    selectActive: () => {
+      try {
+        const query = `SELECT * FROM ${actionTableName} WHERE status = 1;`
         const data = db.prepare(query).all()
         return data
       } catch (e) {
@@ -87,14 +108,14 @@ const actionModel = (db) => {
         return false
       }
     },
-    addDeviceAction: (deviceId, actionId, status) => {
+    addDeviceAction: ({deviceId, actionId, status, priority}) => {
       try {
         const createQuery = db.prepare(
-          `INSERT INTO ${deviceActionTableName} (device_id, action_id, status) VALUES (?, ?, ?);`
+          `INSERT INTO ${deviceActionTableName} (device_id, action_id, status, priority) VALUES (?, ?, ?, ?);`
         )
         let insertedId = null
         db.transaction(() => {
-          const info = createQuery.run(deviceId, actionId, status)
+          const info = createQuery.run(deviceId, actionId, status, priority)
           insertedId = info.lastInsertRowid
         })()
 
