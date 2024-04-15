@@ -4,16 +4,18 @@ const threatHandler = (id, status, services, wsHandlers) => {
   const actionService = services.action
   const sendDataToUsers = wsHandlers.user
 
-  const activeDevices = deviceService.getDeviceByForActiveActions(id)
+  const devices = deviceService.getDeviceByActive(id)
   const payloadForDevice = {
     status: true
   }
-  for(const device of activeDevices){
-    console.log(device)
-    if(device.status == 0){
-      sendDataToDevice({payload: payloadForDevice, action: 'toggleStatus'}, device.id)
-    }
-  }
+
+  console.log(devices)
+
+  // for(const device of activeDevices){
+  //   if(device.status == 0){
+  //     sendDataToDevice({payload: payloadForDevice, action: 'toggleStatus'}, device.id)
+  //   }
+  // }
 
   const payloadForUsers = {
     id,

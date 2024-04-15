@@ -6,9 +6,7 @@ const deviceController = (services) => {
   return {
     verifyClient: ({ id, password }, handlers) => {
       const passwordHash = createHash(password)
-      console.log(passwordHash)
       const isVerified = deviceService.isVerified(id, passwordHash)
-
       return isVerified
     },
     onConnect: async ({ id }, handlers) => {
@@ -17,15 +15,14 @@ const deviceController = (services) => {
     onClose: async ({ id }, handlers) => {
       deviceService.setOffline(id)
     },
-    onMessage: async (jsonData, handlers) => {
-      console.log('onMessage', data)
-      const data = JSON.parse(jsonData)
-      switch(data.action){
-        case "changedStatus": 
-        console.log(data)
-        break
+    onMessage: async (data, handlers) => {
+      const message = JSON.parse(data.message)
+      const payload = message.payload
+      switch (message.action) {
+        case 'changedStatus':
+          deviceService.updateStatus(data.id, payload.status)
+          break
       }
-
     },
     onError: async (data, handlers) => {
       console.log('onError', data)

@@ -32,18 +32,14 @@ const deviceModel = (db) => {
         return false
       }
     },
-    bulkUpdateStatus: (ids = [], status) => {
+    updateStatus: (id, status) => {
       try {
-        if (!ids.length) return
+     
         const query = db.prepare(
-          `UPDATE ${tableName} SET status = ? WHERE id IN (${new Array(
-            ids.length
-          )
-            .fill('?')
-            .join(',')});`
+          `UPDATE ${tableName} SET status = ? WHERE id = ?;`
         )
         db.transaction(() => {
-          const info = query.run(status, ...ids)
+          const info = query.run(status, id)
         })()
 
         return true
@@ -62,21 +58,11 @@ const deviceModel = (db) => {
       const data = db.prepare(query).get(id, password)
       return data
     },
-    getDeviceByForActiveActions: (actionId) => {
+    getDeviceByActive: (actionId) => {
       const query = `
-                    SELECT active.device_id, devices.status from action_device_active AS active 
-                    LEFT JOIN actions ON actions.id = active.action_id 
-                    LEFT JOIN devices ON devices.id = active.device_id
-                    WHERE actions.id = ? AND devices.isOnline = 1;
-                    `
-      const data = db.prepare(query).all(actionId)
-      return data
-    },
-    getDeviceByForInactiveActions: (actionId) => {
-      const query = `
-                    SELECT active.device_id, devices.status from action_device_inactive AS active 
-                    LEFT JOIN actions ON actions.id = active.action_id 
-                    LEFT JOIN devices ON devices.id = active.device_id
+                    SELECT action_device.device_id, devices.status from action_device 
+                    LEFT JOIN actions ON actions.id = action_device.action_id 
+                    LEFT JOIN devices ON devices.id = action_device.device_id
                     WHERE actions.id = ? AND devices.isOnline = 1;
                     `
       const data = db.prepare(query).all(actionId)

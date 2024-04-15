@@ -3,8 +3,7 @@ import { buildInsertQuery, buildSelectQuery } from '../../utils/queryCreator.js'
 const actionModel = (db) => {
   const actionTableName = 'actions'
   const deviceTableName = 'devices'
-  const deviceActionActiveTableName = 'action_device_active'
-  const deviceActionInactiveTableName = 'action_device_inactive'
+  const deviceActionTableName = 'action_device'
 
   db.exec(`
     CREATE TABLE IF NOT EXISTS ${actionTableName} (
@@ -16,25 +15,17 @@ const actionModel = (db) => {
   `)
 
   db.exec(`
-    CREATE TABLE IF NOT EXISTS ${deviceActionActiveTableName} (
+    CREATE TABLE IF NOT EXISTS ${deviceActionTableName} (
       id INTEGER PRIMARY KEY,
       action_id VARCHAR(40),
       device_id INTEGER,
+      status BOOLEAN NOT NULL,
       FOREIGN KEY (action_id) REFERENCES ${actionTableName}(id) ON DELETE CASCADE,
       FOREIGN KEY (device_id) REFERENCES ${deviceTableName}(id) ON DELETE CASCADE,
-      CONSTRAINT unique_action_device UNIQUE (action_id, device_id)
+      CONSTRAINT unique_action_device UNIQUE (action_id, device_id, status)
     )
   `)
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS ${deviceActionInactiveTableName} (
-      id INTEGER PRIMARY KEY,
-      action_id VARCHAR(40),
-      device_id INTEGER,
-      FOREIGN KEY (action_id) REFERENCES ${actionTableName}(id) ON DELETE CASCADE,
-      FOREIGN KEY (device_id) REFERENCES ${deviceTableName}(id) ON DELETE CASCADE,
-      CONSTRAINT unique_action_device UNIQUE (action_id, device_id)
-    )
-  `)
+
 
   return {
     create: (data) => {
@@ -96,32 +87,14 @@ const actionModel = (db) => {
         return false
       }
     },
-    addDeviceToActive: (deviceId, actionId) => {
+    addDeviceAction: (deviceId, actionId, status) => {
       try {
         const createQuery = db.prepare(
-          `INSERT INTO ${deviceActionActiveTableName} (device_id, action_id) VALUES (?, ?);`
+          `INSERT INTO ${deviceActionTableName} (device_id, action_id, status) VALUES (?, ?, ?);`
         )
         let insertedId = null
         db.transaction(() => {
-          const info = createQuery.run(deviceId, actionId)
-          insertedId = info.lastInsertRowid
-        })()
-
-        return insertedId
-      } catch (e) {
-        console.log(e)
-        return null
-      }
-    },
-    addDeviceToInactive: (deviceId, actionId) => {
-      try {
-        const createQuery = db.prepare(
-          `INSERT INTO ${deviceActionInactiveTableName} (device_id, action_id) VALUES (?, ?);`
-        )
-        console.log(deviceId, actionId)
-        let insertedId = null
-        db.transaction(() => {
-          const info = createQuery.run(deviceId, actionId)
+          const info = createQuery.run(deviceId, actionId, status)
           insertedId = info.lastInsertRowid
         })()
 
