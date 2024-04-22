@@ -1,10 +1,19 @@
+import { createHash } from '../utils/hash.js'
+
 const deviceService = (dbHandlers) => {
   const { Device, Action } = dbHandlers
 
   return {
     getAll: () => {
       const deices = Device.getAll()
-      return deices
+      const devicesDto = deices.map((d) => ({
+        id: d.id,
+        name: d.name,
+        isOnline: d.isOnline ? true : false,
+        status: d.status ? true : false,
+        connectedAt: d.connectedAt,
+      }))
+      return devicesDto
     },
     getDeviceByActive: (actionId) => {
       const devicesId = Device.getDeviceByActive(actionId)
@@ -17,14 +26,13 @@ const deviceService = (dbHandlers) => {
     updateStatus: (id, isActive) => {
       Device.updateStatus(id, isActive ? 1 : 0)
     },
-    create: (name) => {
+    create: ({ name, password }) => {
       const deviceData = {
         name,
-        isOnline: 0,
-        status: 1,
+        password: createHash(password),
       }
-      const id = Device.create(deviceData)
-      return id
+      const response = Device.create(deviceData)
+      return response
     },
     setOnline: (id) => {
       Device.setOnline(true, id)

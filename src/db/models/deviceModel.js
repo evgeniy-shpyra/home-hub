@@ -15,26 +15,26 @@ const deviceModel = (db) => {
   `)
 
   return {
-    create: (data) => {
+    create: function (data) {
       try {
-        const { query, values } = buildInsertQuery(tableName, data)
-        const createQuery = db.prepare(query)
+        const { name, password } = data
 
-        let insertedId = null
+        const createQuery = db.prepare(
+          `INSERT INTO ${tableName} (name, password, isOnline, status) VALUES (?, ?, 0, 0);`
+        )
+
         db.transaction(() => {
-          const info = createQuery.run(...values)
-          insertedId = info.lastInsertRowid
+          createQuery.run(name, password)
         })()
 
-        return insertedId
+        return {success: true}
       } catch (e) {
         console.log(e)
-        return false
+        return {success: false, error: e.message}
       }
     },
     updateStatus: (id, status) => {
       try {
-     
         const query = db.prepare(
           `UPDATE ${tableName} SET status = ? WHERE id = ?;`
         )
@@ -51,6 +51,11 @@ const deviceModel = (db) => {
     getAll: () => {
       const { query } = buildSelectQuery(tableName)
       const data = db.prepare(query).all()
+      return data
+    },
+    getByNameAndPassword: ({name, password}) => {
+      const query = `SELECT * FROM ${tableName} WHERE name = ? AND password = ?;`
+      const data = db.prepare(query).get(name, password)
       return data
     },
     getByIdAndPassword: (id, password) => {
@@ -74,7 +79,7 @@ const deviceModel = (db) => {
           `UPDATE ${tableName} SET isOnline = ?, connectedAt = ? WHERE id = ?;`
         )
         db.transaction(() => {
-          query.run(isOnline ? 1 : 0, new Date().toISOString(), id) 
+          query.run(isOnline ? 1 : 0, new Date().toISOString(), id)
         })()
       } catch (e) {
         console.log(e)

@@ -4,16 +4,18 @@ import actionModel from './models/actionModel.js'
 import setupDb from './setupDb.js'
 import userModel from './models/userModel.js'
 import sensorModel from './models/sensorsModel.js'
+import deviceActionModel from './models/deviceActionModel.js'
 
 const initDb = () => {
   const db = new Database('home.db')
 
   const Device = deviceModel(db)
   const Action = actionModel(db)
+  const DeviceAction = deviceActionModel(db)
   const User = userModel(db)
   const Sensor = sensorModel(db)
 
-  const models = { Device, Action, User, Sensor }
+  const models = { Device, Action, User, Sensor, DeviceAction }
 
   setupDb(models)
 

@@ -63,10 +63,10 @@ const setupDb = (handlers) => {
 
     
     Action.addDeviceAction({deviceId: 1, actionId: 'missileThreat', status: 0, priority: 1})
-    Action.addDeviceAction({deviceId: 2, actionId: 'missileThreat', status: 0, priority: 1})
-    Action.addDeviceAction({deviceId: 3, actionId: 'missileThreat', status: 0, priority: 1})
+    Action.addDeviceAction({deviceId: 2, actionId: 'missileThreat', status: 1, priority: 3})
+    Action.addDeviceAction({deviceId: 3, actionId: 'missileThreat', status: 1, priority: 1})
     Action.addDeviceAction({deviceId: 3, actionId: 'radiationThreat', status: 0, priority: 3})
-    Action.addDeviceAction({deviceId: 3, actionId: 'chemicalThreat', status: 0, priority: 3})
+    Action.addDeviceAction({deviceId: 3, actionId: 'chemicalThreat', status: 1, priority: 3})
   }
 }
 

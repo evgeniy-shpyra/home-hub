@@ -1,11 +1,13 @@
 import parseCookies from '../../utils/parseCookies.js'
+import createDeviceSchema from './schema/device/createDeviceSchema.js'
+import getDeviceSchema from './schema/device/getDeviceSchema.js'
 
 const initHttp = async (server, controllers, services) => {
   const combinedControllers = {
     post: {
       'device': {
         handler: controllers.device.create,
-        schema: null,
+        schema: createDeviceSchema,
         isAuth: true,
       },
       'action-device-active': {
@@ -22,7 +24,7 @@ const initHttp = async (server, controllers, services) => {
     get: {
       device: {
         handler: controllers.device.get,
-        schema: null,
+        schema: getDeviceSchema,
         isAuth: true,
       },
       action: {
