@@ -1,4 +1,4 @@
-import { buildInsertQuery, buildSelectQuery } from '../../utils/queryCreator.js'
+import { queryWrapper } from '../../utils/dbTools.js'
 
 const deviceActionModel = (db) => {
   const actionTableName = 'actions'
@@ -8,34 +8,41 @@ const deviceActionModel = (db) => {
   db.exec(`
     CREATE TABLE IF NOT EXISTS ${deviceActionTableName} (
       id INTEGER PRIMARY KEY,
-      action_id VARCHAR(40),
-      device_id INTEGER,
+      actionId VARCHAR(40),
+      deviceId INTEGER,
       status BOOLEAN NOT NULL,
       priority INTEGER NOT NULL,
-      FOREIGN KEY (action_id) REFERENCES ${actionTableName}(id) ON DELETE CASCADE,
-      FOREIGN KEY (device_id) REFERENCES ${deviceTableName}(id) ON DELETE CASCADE,
-      CONSTRAINT unique_action_device UNIQUE (action_id, device_id, status)
+      FOREIGN KEY (actionId) REFERENCES ${actionTableName}(id) ON DELETE CASCADE,
+      FOREIGN KEY (deviceId) REFERENCES ${deviceTableName}(id) ON DELETE CASCADE,
+      CONSTRAINT unique_action_device UNIQUE (actionId, deviceId, status)
     )
   `)
 
-
   return {
-    addDeviceAction: ({deviceId, actionId, status, priority}) => {
-      try {
+    select: () => {
+      return queryWrapper(() => {
+        const query = `SELECT * FROM ${deviceActionTableName};`
+        const result = db.prepare(query).all()
+        return result
+      })
+    },
+    addDeviceAction: ({ deviceId, actionId, status, priority }) => {
+      return queryWrapper(() => {
         const createQuery = db.prepare(
-          `INSERT INTO ${deviceActionTableName} (device_id, action_id, status, priority) VALUES (?, ?, ?, ?);`
+          `INSERT INTO ${deviceActionTableName} (deviceId, actionId, status, priority) VALUES (?, ?, ?, ?);`
         )
-        let insertedId = null
         db.transaction(() => {
-          const info = createQuery.run(deviceId, actionId, status, priority)
-          insertedId = info.lastInsertRowid
+          createQuery.run(deviceId, actionId, status, priority)
         })()
-
-        return insertedId
-      } catch (e) {
-        console.log(e)
-        return null
-      }
+      })
+    },
+    deleteById: (id) => {
+      return queryWrapper(() => {
+        const query = `DELETE FROM ${tableName} WHERE id = ?`
+        const result = db.prepare(query).run(id)
+        const isDeleted = result.changes === 1
+        return isDeleted
+      })
     },
   }
 }

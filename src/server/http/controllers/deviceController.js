@@ -1,20 +1,30 @@
 const infoController = (services) => {
   const deviceService = services.device
 
-  const get = () => {
-    const payload = deviceService.getAll()
-    return { code: 200, payload }
+  return {
+    getAll: () => {
+      const payload = deviceService.getAll()
+      return { code: 200, payload }
+    },
+    create: ({ name, password }) => {
+      const response = deviceService.create({ name, password })
+      if (!response.success) {
+        return { code: 400, payload: { error: response.error } }
+      }
+      return { code: 200 }
+    },
+    delete: ({ id }) => {
+      const isDeleted = deviceService.delete(id)
+      if (!isDeleted) {
+        return {
+          code: 400,
+          payload: { error: `Can't delete device with id ${id}` },
+        }
+      }
+      return { code: 204 }
+    },
   }
 
-  const create = ({ name, password }) => {
-    const response = deviceService.create({ name, password })
-    if (!response.success) {
-      return { code: 400, payload: { error: response.error } }
-    }
-    return { code: 200 }
-  }
-
-  return { get, create }
 }
 
 export default infoController

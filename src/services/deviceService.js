@@ -15,6 +15,13 @@ const deviceService = (dbHandlers) => {
       }))
       return devicesDto
     },
+    getById: (id) => {
+      const response = Device.getById(id)
+      if (!response.success) {
+        throw new Error(response.error)
+      }
+      return response.payload
+    },
     getDeviceByActive: (actionId) => {
       const devicesId = Device.getDeviceByActive(actionId)
       return devicesId
@@ -40,6 +47,14 @@ const deviceService = (dbHandlers) => {
     setOffline: (id) => {
       Device.setOnline(false, id)
     },
+    delete: (id) => {
+      const result = Device.deleteById(id)
+      if (!result.success) {
+        throw new Error(result.message)
+      }
+      const isDeleted = result.payload
+      return isDeleted
+    }
   }
 }
 

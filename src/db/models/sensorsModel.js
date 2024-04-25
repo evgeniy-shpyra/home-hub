@@ -1,3 +1,4 @@
+import { queryWrapper } from '../../utils/dbTools.js'
 import { buildInsertQuery, buildSelectQuery } from '../../utils/queryCreator.js'
 
 const sensorModel = (db) => {
@@ -17,27 +18,22 @@ const sensorModel = (db) => {
   `)
 
   return {
-    create: (data) => {
-      try {
-        const { query, values } = buildInsertQuery(tableName, data)
-        const createQuery = db.prepare(query)
-
-        let insertedId = null
+    create: ({ name, password, action_id }) => {
+      return queryWrapper(() => {
+        const createQuery = db.prepare(
+          `INSERT INTO ${tableName} (name, password, isOnline, action_id) VALUES (?, ?, 0, ?);`
+        )
         db.transaction(() => {
-          const info = createQuery.run(...values)
-          insertedId = info.lastInsertRowid
+          createQuery.run(name, password, action_id)
         })()
-
-        return insertedId
-      } catch (e) {
-        console.log(e)
-        return false
-      }
+      })
     },
     getAll: () => {
-      const { query } = buildSelectQuery(tableName)
-      const data = db.prepare(query).all()
-      return data
+      return queryWrapper(() => {
+        const { query } = buildSelectQuery(tableName)
+        const data = db.prepare(query).all()
+        return data
+      })
     },
     getById: (id) => {
       const query = `SELECT * FROM ${tableName} WHERE id = ?;`
@@ -73,7 +69,15 @@ const sensorModel = (db) => {
       })()
 
       return changed
-    }
+    },
+    deleteById: (id) => {
+      return queryWrapper(() => {
+        const query = `DELETE FROM ${tableName} WHERE id = ?`
+        const result = db.prepare(query).run(id)
+        const isDeleted = result.changes === 1
+        return isDeleted
+      })
+    },
   }
 }
 

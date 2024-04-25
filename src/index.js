@@ -21,11 +21,14 @@ const app = async () => {
     const wsControllers = initWsControllers(services)
     const wsHandlers = await initWebsocket(server.server, wsControllers)
 
-    const alarmApi = initAlarmApi(config.mainServer)
+    const alarmApi = initAlarmApi(config.mainServer, 5_000)
 
-    alarmApi.subscribe('alarm', (data) => {
-      threatHandler('missileThreat', data.isDanger, services, wsHandlers)
-    })
+    alarmApi.subscribe(
+      'alarm',
+      (data) => {
+        threatHandler('missileThreat', data.isDanger, services, wsHandlers)
+      }
+    )
 
     await server.start()
   } catch (e) {

@@ -1,82 +1,64 @@
-import {
-  buildInsertQuery,
-  buildSelectQuery,
-  checkFieldNames
-} from '../../utils/queryCreator.js'
+import { queryWrapper } from '../../utils/dbTools.js'
 
 const userModel = (db) => {
   const tableName = 'users'
-  const fields = {
-    id: 'id',
-    uuid: 'uuid',
-    password: 'password',
-    login: 'login',
-    isOnline: 'isOnline',
-    lastOnlineTime: 'lastOnlineTime'
-  }
 
   db.exec(`
     CREATE TABLE IF NOT EXISTS ${tableName} (
-      ${fields.id} INTEGER PRIMARY KEY,
-      ${fields.uuid} VARCHAR(36) NOT NULL,
-      ${fields.password} VARCHAR(100) NOT NULL,
-      ${fields.login} VARCHAR(30) NOT NULL,
-      ${fields.isOnline} BOOLEAN NOT NULL,
-      ${fields.lastOnlineTime} DATETIME
+      id INTEGER PRIMARY KEY,
+      uuid VARCHAR(36) NOT NULL,
+      password VARCHAR(100) NOT NULL,
+      login VARCHAR(30) NOT NULL,
+      isOnline BOOLEAN NOT NULL,
+      lastOnlineTime DATETIME
     )  
   `)
 
   return {
-    create: (data) => {
-      try {
-        if (!checkFieldNames(data, fields)) {
-          throw new Error('Incorrect field name')
-        }
-        const { query, values } = buildInsertQuery(tableName, data)
-        const createQuery = db.prepare(query)
-
-        let insertedId = null
+    create: ({ uuid, password, login }) => {
+      return queryWrapper(() => {
+        const query = `INSERT INTO ${tableName} (uuid, password, login, isOnline) VALUES (?, ?, ?, 0);`
         db.transaction(() => {
-          const info = createQuery.run(...values)
-          insertedId = info.lastInsertRowid
+          db.prepare(query).run(uuid, password, login)
         })()
-
-        return insertedId
-      } catch (e) {
-        console.log(e)
-        return false
-      }
+      })
     },
     getAll: () => {
-      try {
-        const { query } = buildSelectQuery(tableName)
-        const data = db.prepare(query).all()
-        return data
-      } catch (e) {
-        console.log(e)
-        return false
-      }
+      return queryWrapper(() => {
+        const query = `SELECT * FROM ${tableName}`
+        const result = db.prepare(query).all()
+        return result
+      })
     },
-    count: () => {
-      try {
-        const query = `SELECT COUNT(*) FROM ${tableName}`
-        const count = db.prepare(query).pluck().get()
-        return count
-      } catch (e) {
-        console.log(e)
-        return false
-      }
+    getCount: () => {
+      return queryWrapper(() => {
+        const query = `SELECT COUNT(*) as count FROM ${tableName}`
+        const result = db.prepare(query).get()
+        return result.count
+      })
+    },
+    getByLoginAndPassword: ({ login, password }) => {
+      return queryWrapper(() => {
+        const query = `SELECT * FROM ${tableName} WHERE login = ? AND password = ?;`
+        const result = db.prepare(query).get(login, password)
+        return result
+      })
     },
     getByUuid: (uuid) => {
-      try {
+      return queryWrapper(() => {
         const query = `SELECT * FROM ${tableName} WHERE uuid = ?`
-        const user = db.prepare(query).pluck().get(uuid)
-        return user
-      } catch (e) {
-        console.log(e)
-        return false
-      }
-    }
+        const result = db.prepare(query).get(uuid)
+        return result
+      })
+    },
+    deleteById: (id) => {
+      return queryWrapper(() => {
+        const query = `DELETE FROM ${tableName} WHERE id = ?`
+        const result = db.prepare(query).run(id)
+        const isDeleted = result.changes === 1 
+        return isDeleted
+      })
+    },
   }
 }
 

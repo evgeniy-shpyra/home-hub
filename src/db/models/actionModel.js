@@ -1,3 +1,4 @@
+import { queryWrapper } from '../../utils/dbTools.js'
 import { buildInsertQuery, buildSelectQuery } from '../../utils/queryCreator.js'
 
 const actionModel = (db) => {
@@ -21,7 +22,6 @@ const actionModel = (db) => {
         let insertedId = null
         db.transaction(() => {
           const info = createQuery.run(...values)
-
           insertedId = info.lastInsertRowid
         })()
 
@@ -32,14 +32,11 @@ const actionModel = (db) => {
       }
     },
     select: (fields = null) => {
-      try {
+      return queryWrapper(() => {
         const { query } = buildSelectQuery(actionTableName, { fields })
-        const data = db.prepare(query).all()
-        return data
-      } catch (e) {
-        console.log(e)
-        return false
-      }
+        const result = db.prepare(query).all()
+        return result
+      })
     },
     selectStatusById: (id) => {
       try {

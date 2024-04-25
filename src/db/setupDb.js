@@ -24,18 +24,10 @@ const devices = [
     status: 0,
   },
 ]
-const sensors = [
-  {
-    id: 1,
-    name: 'Датчик газів',
-    password: createHash('111'),
-    isOnline: 0,
-    action_id: 'chemicalThreat',
-  },
-]
+
 
 const setupDb = (handlers) => {
-  const { Action, Device, Sensor } = handlers
+  const { Action, Device } = handlers
 
   const allActions = Action.select()
   if (allActions.length !== actions.length) {
@@ -54,20 +46,6 @@ const setupDb = (handlers) => {
     }
   }
 
-  const allSensors = Sensor.getAll()
-  if (allSensors.length !== sensors.length) {
-    Sensor.deleteAll()
-    for (const sensor of sensors) {
-      Sensor.create(sensor)
-    }
-
-    
-    Action.addDeviceAction({deviceId: 1, actionId: 'missileThreat', status: 0, priority: 1})
-    Action.addDeviceAction({deviceId: 2, actionId: 'missileThreat', status: 1, priority: 3})
-    Action.addDeviceAction({deviceId: 3, actionId: 'missileThreat', status: 1, priority: 1})
-    Action.addDeviceAction({deviceId: 3, actionId: 'radiationThreat', status: 0, priority: 3})
-    Action.addDeviceAction({deviceId: 3, actionId: 'chemicalThreat', status: 1, priority: 3})
-  }
 }
 
 export default setupDb

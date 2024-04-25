@@ -1,8 +1,19 @@
 import parseCookies from '../../utils/parseCookies.js'
-import createDeviceSchema from './schema/device/createDeviceSchema.js'
-import getDeviceSchema from './schema/device/getDeviceSchema.js'
+import { getActionsSchema } from './schema/actionSchemas.js'
+import { createDeviceActionSchema, getDevicesActionsSchema } from './schema/deviceActionSchemas.js'
+import { createDeviceSchema, deleteDeviceSchema, getDevicesSchema } from './schema/deviceSchemas.js'
+import { createSensorSchema, deleteSensorSchema, getSensorsSchema } from './schema/sensorSchemas.js'
+
+import {
+  createUserSchema,
+  deleteUserSchema,
+  getUserSchema,
+  getUsersSchema,
+  loginUserSchema,
+} from './schema/userSchemas.js'
 
 const initHttp = async (server, controllers, services) => {
+
   const combinedControllers = {
     post: {
       'device': {
@@ -10,30 +21,73 @@ const initHttp = async (server, controllers, services) => {
         schema: createDeviceSchema,
         isAuth: true,
       },
-      'action-device-active': {
-        handler: controllers.action.addDeviseToActive,
-        schema: null,
+      create: {
+        handler: controllers.sensor.create,
+        schema: createSensorSchema,
         isAuth: true,
       },
-      'action-device-inactive': {
-        handler: controllers.action.addDeviseToInactive,
-        schema: null,
+      'device-action': {
+        handler: controllers.deviceAction.create,
+        schema: createDeviceActionSchema,
         isAuth: true,
+      },
+      'user': {
+        handler: controllers.user.create,
+        schema: createUserSchema,
+        isAuth: true,
+      },
+      'login': {
+        handler: controllers.user.login,
+        schema: loginUserSchema,
+        isAuth: false,
       },
     },
     get: {
-      device: {
-        handler: controllers.device.get,
-        schema: getDeviceSchema,
+      'devices': {
+        handler: controllers.device.getAll,
+        schema: getDevicesSchema,
         isAuth: true,
       },
-      action: {
-        handler: controllers.action.get,
-        schema: null,
+      'actions': {
+        handler: controllers.action.getAll,
+        schema: getActionsSchema,
         isAuth: true,
       },
-      getUser: {
-        handler: controllers.user.getUser,
+      'user': {
+        handler: controllers.user.get,
+        schema: getUserSchema,
+        isAuth: true,
+      },
+      'users': {
+        handler: controllers.user.getAll,
+        schema: getUsersSchema,
+        isAuth: true,
+      },
+      'devices-actions': {
+        handler: controllers.deviceAction.get,
+        schema: getDevicesActionsSchema,
+        isAuth: true,
+      },
+      'sensors': {
+        handler: controllers.sensor.getAll,
+        schema: getSensorsSchema,
+        isAuth: true,
+      },
+    },
+    delete: {
+      'user/:id': {
+        handler: controllers.user.delete,
+        schema: deleteUserSchema,
+        isAuth: true,
+      },
+      'sensor/:id': {
+        handler: controllers.sensor.delete,
+        schema: deleteSensorSchema,
+        isAuth: true,
+      },
+      'device/:id': {
+        handler: controllers.device.delete,
+        schema: deleteDeviceSchema,
         isAuth: true,
       },
     },
@@ -52,17 +106,27 @@ const initHttp = async (server, controllers, services) => {
       const userData = verifyAuth(cookies)
 
       if (isRequiredAuth && !userData.isAuth) {
-        reply.code(401).send({ error: ['Not authorized'] })
+        reply 
+          .clearCookie('id')
+          .code(401)
+          .send({ error: ['Not authorized'] })
         return
       }
 
-      const body = req.body
       const user = userData.user
 
-      const response = await handler(body, user)
+      let body = req.body || {}
+      const params = req.params || {}
 
-      if (user) {
-        reply.setCookie(id, user.uuid, {
+      const response = await handler({ ...body, ...params }, user)
+
+      if (response && response.user) {
+        reply.setCookie('id', response.user.uuid, {
+          signed: true,
+          path: '/',
+        })
+      } else if (user) {
+        reply.setCookie('id', user.uuid, {
           signed: true,
           path: '/',
         })
@@ -71,7 +135,7 @@ const initHttp = async (server, controllers, services) => {
       reply.code(response.code).send(response.payload)
     } catch (e) {
       console.log(e)
-      reply.code(400).send({ error: ['An error occurred'] })
+      reply.code(400).send({ error: ['An error occurred', e.message] })
     }
   }
 

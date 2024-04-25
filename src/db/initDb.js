@@ -17,14 +17,14 @@ const initDb = () => {
 
   const models = { Device, Action, User, Sensor, DeviceAction }
 
-  setupDb(models)
+  // setupDb(models)
 
   return {
     close: () => {
       db.close()
     },
     models,
-  }
+  } 
 }
 
 export default initDb

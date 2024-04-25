@@ -1,3 +1,4 @@
+import { queryWrapper } from '../../utils/dbTools.js'
 import { buildInsertQuery, buildSelectQuery } from '../../utils/queryCreator.js'
 
 const deviceModel = (db) => {
@@ -16,44 +17,39 @@ const deviceModel = (db) => {
 
   return {
     create: function (data) {
-      try {
+      return queryWrapper(() => {
         const { name, password } = data
-
         const createQuery = db.prepare(
           `INSERT INTO ${tableName} (name, password, isOnline, status) VALUES (?, ?, 0, 0);`
         )
-
         db.transaction(() => {
           createQuery.run(name, password)
         })()
-
-        return {success: true}
-      } catch (e) {
-        console.log(e)
-        return {success: false, error: e.message}
-      }
+      })
     },
     updateStatus: (id, status) => {
-      try {
+      return queryWrapper(() => {
         const query = db.prepare(
           `UPDATE ${tableName} SET status = ? WHERE id = ?;`
         )
         db.transaction(() => {
-          const info = query.run(status, id)
+          query.run(status, id)
         })()
-
-        return true
-      } catch (e) {
-        console.log(e)
-        return false
-      }
+      })
     },
     getAll: () => {
       const { query } = buildSelectQuery(tableName)
       const data = db.prepare(query).all()
       return data
     },
-    getByNameAndPassword: ({name, password}) => {
+    getById: () => {
+      return queryWrapper(() => {
+        const query = `SELECT * FROM ${tableName} WHERE id = ?;`
+        const result = db.prepare(query).get(id)
+        return result
+      })
+    },
+    getByNameAndPassword: ({ name, password }) => {
       const query = `SELECT * FROM ${tableName} WHERE name = ? AND password = ?;`
       const data = db.prepare(query).get(name, password)
       return data
@@ -96,6 +92,14 @@ const deviceModel = (db) => {
       })()
 
       return changed
+    },
+    deleteById: (id) => {
+      return queryWrapper(() => {
+        const query = `DELETE FROM ${tableName} WHERE id = ?`
+        const result = db.prepare(query).run(id)
+        const isDeleted = result.changes === 1
+        return isDeleted
+      })
     },
   }
 }

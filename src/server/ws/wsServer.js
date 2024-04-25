@@ -26,11 +26,13 @@ const initWebsocket = async (server, controllers) => {
           if (id && password) {
             isVerified = sensorController.verifyClient({ id, password })
           }
-        } else if (url === '/ws/device') {
-          const id = info.req.headers.id
-          const password = info.req.headers.password
-          if (id && password) {
-            isVerified = deviceController.verifyClient({ id, password })
+        } else if (url === '/ws/device' && info.req.headers.authorization) {
+          const authData = info.req.headers.authorization.split(' ')
+          if (authData.length === 2) {
+            const [id, password] = Buffer.from(authData[1], 'base64').toString('utf8').split(":")
+            if (id && password) {
+              isVerified = deviceController.verifyClient({ id, password })
+            }
           }
         }
         next(isVerified)
@@ -41,7 +43,8 @@ const initWebsocket = async (server, controllers) => {
   const deviceSubscribes = {}
   server.get('/ws/device', { websocket: true }, async (socket, request) => {
     const { onConnect, onClose, onMessage, onError } = deviceController
-    const id = request.headers.id
+    const authData = request.headers.authorization.split(' ')
+    const [id, password] = Buffer.from(authData[1], 'base64').toString('utf8').split(":")
 
     await onConnect({ id }, handlers)
 
@@ -129,8 +132,7 @@ const initWebsocket = async (server, controllers) => {
       onError({ message: e.message }, handlers)
     }
   })
-  const sendDataToSensors = (data) => {
-  }
+  const sendDataToSensors = (data) => {}
 
   handlers.device = sendDataToDevices
   handlers.user = sendDataToUsers
