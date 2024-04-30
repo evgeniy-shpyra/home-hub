@@ -1,5 +1,4 @@
 import { queryWrapper } from '../../utils/dbTools.js'
-import { buildInsertQuery, buildSelectQuery } from '../../utils/queryCreator.js'
 
 const sensorModel = (db) => {
   const tableName = 'sensors'
@@ -11,7 +10,8 @@ const sensorModel = (db) => {
       name TEXT UNIQUE NOT NULL,
       password VARCHAR(64) NOT NULL,
       isOnline BOOLEAN NOT NULL,
-      action_id VARCHAR(40) NOT NULL,
+      action_id NUMBER NOT NULL,
+      status BOOLEAN NOT NULL,
       connectedAt DATETIME,
       FOREIGN KEY (action_id) REFERENCES ${actionTableName}(id) ON DELETE CASCADE
     )  
@@ -21,7 +21,7 @@ const sensorModel = (db) => {
     create: ({ name, password, action_id }) => {
       return queryWrapper(() => {
         const createQuery = db.prepare(
-          `INSERT INTO ${tableName} (name, password, isOnline, action_id) VALUES (?, ?, 0, ?);`
+          `INSERT INTO ${tableName} (name, password, isOnline, action_id, status) VALUES (?, ?, 0, ?, 0);`
         )
         db.transaction(() => {
           createQuery.run(name, password, action_id)
@@ -30,45 +30,42 @@ const sensorModel = (db) => {
     },
     getAll: () => {
       return queryWrapper(() => {
-        const { query } = buildSelectQuery(tableName)
+        const query = `SELECT * FROM ${tableName};`
         const data = db.prepare(query).all()
         return data
       })
     },
     getById: (id) => {
-      const query = `SELECT * FROM ${tableName} WHERE id = ?;`
-      const data = db.prepare(query).get(id)
-      return data
+      return queryWrapper(() => {
+        const query = `SELECT * FROM ${tableName} WHERE id = ?;`
+        const data = db.prepare(query).get(id)
+        return data
+      })
     },
-    getByIdAndPassword: (id, password) => {
-      const query = `SELECT * FROM ${tableName} WHERE id = ? AND password = ?;`
-      const data = db.prepare(query).get(id, password)
-      return data
+    getByIdAndPassword: ({ id, password }) => {
+      return queryWrapper(() => {
+        const query = `SELECT * FROM ${tableName} WHERE id = ? AND password = ?;`
+        const data = db.prepare(query).get(id, password)
+        return data
+      })
     },
-    setOnline: (isOnline, id) => {
-      try {
-        const query = db.prepare(
+    setOnline: ({ isOnline, id }) => {
+      return queryWrapper(() => {
+        const createQuery = db.prepare(
           `UPDATE ${tableName} SET isOnline = ?, connectedAt = ? WHERE id = ?;`
         )
         db.transaction(() => {
-          const info = query.run(isOnline ? 1 : 0, new Date().toISOString(), id)
-          console.log({ info })
+          createQuery.run(isOnline, new Date().toISOString(), id)
         })()
-      } catch (e) {
-        console.log(e)
-        return false
-      }
+      })
     },
     deleteAll: () => {
-      const deleteQuery = db.prepare(`DELETE FROM ${tableName};`)
-
-      let changed = null
-      db.transaction(() => {
-        const result = deleteQuery.run()
-        changed = result.changes
-      })()
-
-      return changed
+      return queryWrapper(() => {
+        const query = db.prepare(`DELETE FROM ${tableName};`)
+        db.transaction(() => {
+          query.run()
+        })()
+      })
     },
     deleteById: (id) => {
       return queryWrapper(() => {
@@ -78,6 +75,16 @@ const sensorModel = (db) => {
         return isDeleted
       })
     },
+    changeStatus: ({id, status}) => {
+      return queryWrapper(() => {
+        const createQuery = db.prepare(
+          `UPDATE ${tableName} SET status = ? WHERE id = ?;`
+        )
+        db.transaction(() => {
+          createQuery.run(status, id)
+        })()
+      })
+    }
   }
 }
 

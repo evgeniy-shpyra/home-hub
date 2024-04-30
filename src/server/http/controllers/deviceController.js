@@ -7,10 +7,8 @@ const infoController = (services) => {
       return { code: 200, payload }
     },
     create: ({ name, password }) => {
-      const response = deviceService.create({ name, password })
-      if (!response.success) {
-        return { code: 400, payload: { error: response.error } }
-      }
+      deviceService.create({ name, password })
+
       return { code: 200 }
     },
     delete: ({ id }) => {
@@ -24,7 +22,6 @@ const infoController = (services) => {
       return { code: 204 }
     },
   }
-
 }
 
 export default infoController

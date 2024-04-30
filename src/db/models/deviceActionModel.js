@@ -10,30 +10,30 @@ const deviceActionModel = (db) => {
       id INTEGER PRIMARY KEY,
       actionId VARCHAR(40),
       deviceId INTEGER,
-      status BOOLEAN NOT NULL,
       priority INTEGER NOT NULL,
+      deviceStatus BOOLEAN NOT NULL,
       FOREIGN KEY (actionId) REFERENCES ${actionTableName}(id) ON DELETE CASCADE,
       FOREIGN KEY (deviceId) REFERENCES ${deviceTableName}(id) ON DELETE CASCADE,
-      CONSTRAINT unique_action_device UNIQUE (actionId, deviceId, status)
+      CONSTRAINT unique_action_device UNIQUE (actionId, deviceId)
     )
   `)
-
+ 
   return {
+    create: function ({ actionId, deviceId, priority, deviceStatus }) {
+      return queryWrapper(() => {
+        const createQuery = db.prepare(
+          `INSERT INTO ${deviceActionTableName} (actionId, deviceId, deviceStatus, priority) VALUES (?, ?, ?, ?);`
+        )
+        db.transaction(() => {
+          createQuery.run(actionId, deviceId, deviceStatus, priority )
+        })()
+      })
+    },
     select: () => {
       return queryWrapper(() => {
         const query = `SELECT * FROM ${deviceActionTableName};`
         const result = db.prepare(query).all()
         return result
-      })
-    },
-    addDeviceAction: ({ deviceId, actionId, status, priority }) => {
-      return queryWrapper(() => {
-        const createQuery = db.prepare(
-          `INSERT INTO ${deviceActionTableName} (deviceId, actionId, status, priority) VALUES (?, ?, ?, ?);`
-        )
-        db.transaction(() => {
-          createQuery.run(deviceId, actionId, status, priority)
-        })()
       })
     },
     deleteById: (id) => {

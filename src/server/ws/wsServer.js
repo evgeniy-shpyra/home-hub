@@ -5,8 +5,6 @@ const initWebsocket = async (server, controllers) => {
   const userController = controllers.user
   const sensorController = controllers.sensor
 
-  const handlers = {}
-
   await server.register(websocket, {
     errorHandler: function (error, socket, req, reply) {
       socket.terminate()
@@ -14,61 +12,86 @@ const initWebsocket = async (server, controllers) => {
     options: {
       maxPayload: 1048576,
       verifyClient: async (info, next) => {
-        const url = info.req.url
-        let isVerified = false
+        try {
+          const url = info.req.url
+          let isVerified = false
 
-        if (url === '/ws/user') {
-          const id = info.req.headers.id
-          isVerified = userController.verifyClient({ id })
-        } else if (url === '/ws/sensor') {
-          const id = info.req.headers.id
-          const password = info.req.headers.password
-          if (id && password) {
-            isVerified = sensorController.verifyClient({ id, password })
-          }
-        } else if (url === '/ws/device' && info.req.headers.authorization) {
-          const authData = info.req.headers.authorization.split(' ')
-          if (authData.length === 2) {
-            const [id, password] = Buffer.from(authData[1], 'base64').toString('utf8').split(":")
-            if (id && password) {
-              isVerified = deviceController.verifyClient({ id, password })
+          if (url === '/ws/user') {
+            const id = info.req.headers.id
+            isVerified = userController.verifyClient({ id })
+          } else if (url === '/ws/device' && info.req.headers.authorization) {
+            const authData = info.req.headers.authorization.split(' ')
+            if (authData.length === 2) {
+              const [name, password] = Buffer.from(authData[1], 'base64')
+                .toString('utf8')
+                .split(':')
+              console.log({ name, password })
+              if (name && password) {
+                isVerified = deviceController.verifyClient({ name, password })
+              }
+            }
+          } else if (url === '/ws/sensor' && info.req.headers.authorization) {
+            const authData = info.req.headers.authorization.split(' ')
+            if (authData.length === 2) {
+              const [id, password] = Buffer.from(authData[1], 'base64')
+                .toString('utf8')
+                .split(':')
+              if (id && password) {
+                isVerified = sensorController.verifyClient({ id, password })
+              }
             }
           }
+          next(isVerified)
+        } catch (e) {
+          console.log(e)
+          next(false)
         }
-        next(isVerified)
       },
     },
   })
 
   const deviceSubscribes = {}
   server.get('/ws/device', { websocket: true }, async (socket, request) => {
-    const { onConnect, onClose, onMessage, onError } = deviceController
-    const authData = request.headers.authorization.split(' ')
-    const [id, password] = Buffer.from(authData[1], 'base64').toString('utf8').split(":")
-
-    await onConnect({ id }, handlers)
-
-    deviceSubscribes[id] = socket
-
     try {
+      const { onConnect, onClose, onMessage, onError, getDevice } =
+        deviceController
+      const authData = request.headers.authorization.split(' ')
+      const [name, password] = Buffer.from(authData[1], 'base64')
+        .toString('utf8')
+        .split(':')
+
+      const device = getDevice(name)
+      const id = device.id
+
+      deviceSubscribes[id] = socket
+
       socket.on('message', async (message) => {
-        const payload = message.toString()
-        await onMessage({ message: payload, id }, handlers)
+        try {
+          const payload = message.toString()
+          await onMessage({ message: payload, device })
+        } catch (e) {
+          console.log(e)
+        }
       })
 
       socket.on('close', async () => {
         deviceSubscribes[id] && delete deviceSubscribes[id]
-        await onClose({ id }, handlers)
+        await onClose(device)
       })
+
+      onConnect(device)
     } catch (e) {
       console.log('Ws error', e)
-      await onError({ message: e.message }, handlers)
+      await onError({ message: e.message })
     }
   })
   const sendDataToDevices = (data, ids = null) => {
     for (const key in deviceSubscribes) {
       if (ids) {
-        if (ids.includes(+key)) deviceSubscribes[key].send(JSON.stringify(data))
+        if (ids.includes(+key)) {
+          console.log('send message to device', data)
+          deviceSubscribes[key].send(JSON.stringify(data))
+        }
       } else {
         deviceSubscribes[key].send(JSON.stringify(data))
       }
@@ -82,23 +105,27 @@ const initWebsocket = async (server, controllers) => {
       const uuid = request.headers.id
       const subscribersUuid = uuid || crypto.randomUUID()
 
-      await onConnect({ uuid }, handlers)
+      await onConnect({ uuid })
 
       userSubscribes[subscribersUuid] = socket
 
       socket.on('message', async (message) => {
-        const payload = message.toString()
-        await onMessage({ message: payload, uuid }, handlers)
+        try {
+          const payload = message.toString()
+          await onMessage({ message: payload, uuid })
+        } catch (e) {
+          console.log(e)
+        }
       })
 
       socket.on('close', async () => {
         userSubscribes[subscribersUuid] &&
           delete userSubscribes[subscribersUuid]
-        await onClose({ uuid }, handlers)
+        await onClose({ uuid })
       })
     } catch (e) {
       console.log('Ws error', e)
-      await onError({ message: e.message }, handlers)
+      await onError({ message: e.message })
     }
   })
   const sendDataToUsers = (data) => {
@@ -111,32 +138,35 @@ const initWebsocket = async (server, controllers) => {
   server.get('/ws/sensor', { websocket: true }, async (socket, request) => {
     const { onConnect, onClose, onMessage, onError } = sensorController
     try {
-      const id = request.headers.id
+      const authData = request.headers.authorization.split(' ')
+      const [id, password] = Buffer.from(authData[1], 'base64')
+        .toString('utf8')
+        .split(':')
 
-      const sensorData = onConnect({ id }, handlers)
-
+      onConnect({ id })
       sensorSubscribes[id] = socket
 
       socket.on('message', async (message) => {
         const payload = message.toString()
-        onMessage({ message: payload, sensorData }, handlers)
+        onMessage({ message: payload, id })
       })
 
       socket.on('close', async () => {
-        sensorSubscribes[subscribersUuid] &&
-          delete sensorSubscribes[subscribersUuid]
-        onClose({ uuid }, handlers)
+        sensorSubscribes[id] && delete sensorSubscribes[id]
+        onClose({ id })
       })
     } catch (e) {
       console.log('Ws error', e)
-      onError({ message: e.message }, handlers)
+      onError({ message: e.message })
     }
   })
   const sendDataToSensors = (data) => {}
 
-  handlers.device = sendDataToDevices
-  handlers.user = sendDataToUsers
-  handlers.sensor = sendDataToSensors
+  const handlers = {
+    device: sendDataToDevices,
+    user: sendDataToUsers,
+    sensor: sendDataToSensors,
+  }
 
   return handlers
 }

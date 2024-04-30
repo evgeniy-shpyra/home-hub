@@ -1,34 +1,29 @@
-import threatHandler from '../../../threatHandler.js'
-import { createHash } from '../../../utils/hash.js'
-
 const sensorController = (services) => {
   const sensorService = services.sensor
 
   return {
-    verifyClient: ({ id, password }, handlers) => {
-      const passwordHash = createHash(password)
-      const sensor = sensorService.isVerified(id, passwordHash)
-      console.log({ sensor })
-      return sensor ? true : false
-    },
-    onConnect: ({ id }, handlers) => {
-      console.log('Sensor connected')
-      sensorService.setOnline(id)
-      const sensorData = sensorService.getById(id)
+    verifyClient: ({ id, password }) => {
+      const isVerified = sensorService.isVerified({ id, password })
 
-      return sensorData
+      return isVerified
     },
-    onClose: ({ id }, handlers) => {
-      sensorService.setOffline(id)
-      console.log('Sensor unconnected')
+    onConnect: ({ id }) => {
+      sensorService.setOnline(+id)
     },
-    onMessage: ({ message: messageJson, sensorData }, handlers) => {
-      const message = JSON.parse(messageJson)
-      const actionId = sensorData.action_id
-
-      threatHandler(actionId, message.isDanger, services, handlers)
+    onClose: ({ id }) => {
+      sensorService.setOffline(+id)
+      sensorService.changeStatus({ status: false, id })
     },
-    onError: (data, handlers) => {
+    onMessage: ({ message: messageJson, id }) => {
+      try {
+        const message = JSON.parse(messageJson)
+        const status = message.status
+        sensorService.changeStatus({ status, id })
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    onError: (data) => {
       console.log('onError', data)
     },
   }

@@ -1,4 +1,4 @@
-import schemaWrapper from '../../../services/schemaWrapper.js'
+import schemaWrapper from '../../../utils/schemaWrapper.js'
 
 const tags = ['Device&Action']
 
@@ -9,11 +9,11 @@ export const createDeviceActionSchema = schemaWrapper({
     type: 'object',
     properties: {
       deviceId: { type: 'number' },
-      actionId: { type: 'string' },
-      status: { type: 'boolean' },
+      actionId: { type: 'number' },
       priority: { type: 'number' },
+      deviceStatus: { type: 'boolean' },
     },
-    required: ['deviceId', 'actionId', 'status', 'priority'],
+    required: ['deviceId', 'actionId', 'priority'],
     additionalProperties: false,
   },
 })
@@ -28,7 +28,10 @@ export const getDevicesActionsSchema = schemaWrapper({
       items: {
         type: 'object',
         properties: {
-          id: { type: 'number' },
+          deviceId: { type: 'number' },
+          actionId: { type: 'number' },
+          deviceStatus: { type: 'boolean' },
+          actionId: { type: 'number' },
         },
       },
     },

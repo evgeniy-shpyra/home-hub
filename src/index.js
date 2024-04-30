@@ -7,13 +7,17 @@ import initHttpControllers from './server/http/controllers/index.js'
 import initWebsocket from './server/ws/wsServer.js'
 import Services from './services/index.js'
 import initWsControllers from './server/ws/controllers/index.js'
-import threatHandler from './threatHandler.js'
+import { EventEmitter } from 'node:events'
+import { actionBusEvent } from './bus/busEvents.js'
+import webSocketEventHandler from './webSocketEventHandler.js'
 
 const app = async () => {
   try {
+    const bus = new EventEmitter()
+
     const db = initDb()
     const server = await Server(config.server)
-    const services = Services(db.models)
+    const services = Services(db.models, bus)
 
     const httpControllers = initHttpControllers(services)
     await initHttp(server.server, httpControllers, services)
@@ -23,13 +27,15 @@ const app = async () => {
 
     const alarmApi = initAlarmApi(config.mainServer, 5_000)
 
-    alarmApi.subscribe(
-      'alarm',
-      (data) => {
-        threatHandler('missileThreat', data.isDanger, services, wsHandlers)
+    alarmApi.subscribe('alarm', (data) => {
+      const actionData = {
+        id: '1',
+        status: data.isDanger,
       }
-    )
+      // bus.emit(actionBusEvent, actionData)
+    })
 
+    webSocketEventHandler(wsHandlers, bus, services)
     await server.start()
   } catch (e) {
     console.log(e)

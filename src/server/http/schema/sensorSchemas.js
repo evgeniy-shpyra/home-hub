@@ -1,4 +1,4 @@
-import schemaWrapper from '../../../services/schemaWrapper.js'
+import schemaWrapper from '../../../utils/schemaWrapper.js'
 
 const tags = ['Sensor']
 
@@ -11,7 +11,7 @@ export const createSensorSchema = schemaWrapper({
     properties: {
       name: { type: 'string' },
       password: { type: 'string' },
-      action_id: { type: 'string' },
+      action_id: { type: 'number' },
     },
     required: ['name', 'password', 'action_id'],
     additionalProperties: false,
@@ -28,8 +28,8 @@ export const getSensorsSchema = schemaWrapper({
       items: {
         type: 'object',
         properties: {
-          id: { type: 'string' },
-          action_id: {type: 'string'},
+          id: { type: 'number' },
+          action_id: {type: 'number'},
           isOnline: {type: 'boolean'},
           status: { type: 'boolean' },
           name: { type: 'string' },

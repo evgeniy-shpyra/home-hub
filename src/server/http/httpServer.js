@@ -1,8 +1,20 @@
 import parseCookies from '../../utils/parseCookies.js'
-import { getActionsSchema } from './schema/actionSchemas.js'
-import { createDeviceActionSchema, getDevicesActionsSchema } from './schema/deviceActionSchemas.js'
-import { createDeviceSchema, deleteDeviceSchema, getDevicesSchema } from './schema/deviceSchemas.js'
-import { createSensorSchema, deleteSensorSchema, getSensorsSchema } from './schema/sensorSchemas.js'
+import { createActionSchema, getActionsSchema } from './schema/actionSchemas.js'
+import {
+  createDeviceActionSchema,
+  getDevicesActionsSchema,
+} from './schema/deviceActionSchemas.js'
+import {
+  createDeviceSchema,
+  deleteDeviceSchema,
+  getDevicesSchema,
+} from './schema/deviceSchemas.js'
+import {
+  createSensorSchema,
+  deleteSensorSchema,
+  getSensorsSchema,
+} from './schema/sensorSchemas.js'
+import { toggleSystemSchema } from './schema/systemSchemas.js'
 
 import {
   createUserSchema,
@@ -13,7 +25,6 @@ import {
 } from './schema/userSchemas.js'
 
 const initHttp = async (server, controllers, services) => {
-
   const combinedControllers = {
     post: {
       'device': {
@@ -21,9 +32,14 @@ const initHttp = async (server, controllers, services) => {
         schema: createDeviceSchema,
         isAuth: true,
       },
-      create: {
+      'sensor': {
         handler: controllers.sensor.create,
         schema: createSensorSchema,
+        isAuth: true,
+      },
+      'actions': {
+        handler: controllers.action.create,
+        schema: createActionSchema,
         isAuth: true,
       },
       'device-action': {
@@ -41,6 +57,11 @@ const initHttp = async (server, controllers, services) => {
         schema: loginUserSchema,
         isAuth: false,
       },
+      'toggle-system': {
+        handler: controllers.system.toggle,
+        schema: toggleSystemSchema,
+        isAuth: true
+      }
     },
     get: {
       'devices': {
@@ -64,7 +85,7 @@ const initHttp = async (server, controllers, services) => {
         isAuth: true,
       },
       'devices-actions': {
-        handler: controllers.deviceAction.get,
+        handler: controllers.deviceAction.getAll,
         schema: getDevicesActionsSchema,
         isAuth: true,
       },
@@ -106,7 +127,7 @@ const initHttp = async (server, controllers, services) => {
       const userData = verifyAuth(cookies)
 
       if (isRequiredAuth && !userData.isAuth) {
-        reply 
+        reply
           .clearCookie('id')
           .code(401)
           .send({ error: ['Not authorized'] })

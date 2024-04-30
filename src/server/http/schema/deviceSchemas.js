@@ -1,4 +1,4 @@
-import schemaWrapper from '../../../services/schemaWrapper.js'
+import schemaWrapper from '../../../utils/schemaWrapper.js'
 
 const tags = ['Device']
 
@@ -29,7 +29,6 @@ export const getDevicesSchema = schemaWrapper({
           id: { type: 'number' },
           name: { type: 'string' },
           isOnline: { type: 'boolean' },
-          status: { type: 'boolean' },
           connectedAt: { type: 'string' },
         },
       },

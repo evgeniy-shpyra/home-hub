@@ -1,6 +1,19 @@
-import schemaWrapper from '../../../services/schemaWrapper.js'
+import schemaWrapper from '../../../utils/schemaWrapper.js'
 
 const tags = ['Action']
+
+export const createActionSchema = schemaWrapper({
+  tags,
+  description: 'Create an action',
+  body: {
+    type: 'object',
+    properties: {
+      name: { type: 'string' },
+    },
+    required: ['name'],
+    additionalProperties: false,
+  },
+})
 
 export const getActionsSchema = schemaWrapper({
   tags,
@@ -12,9 +25,8 @@ export const getActionsSchema = schemaWrapper({
       items: {
         type: 'object',
         properties: {
-          id: { type: 'string' },
+          id: { type: 'number' },
           lastActiveTime: { type: 'string' },
-          status: { type: 'boolean' },
           name: { type: 'string' },
         },
       },

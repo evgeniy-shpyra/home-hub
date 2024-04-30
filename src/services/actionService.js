@@ -1,22 +1,40 @@
 const actionService = (dbHandlers) => {
-  const { Action, DeviceAction } = dbHandlers
+  const { Action } = dbHandlers
 
   return {
+    create: (name) => {
+      const result = Action.create(name)
+      if (!result.success) {
+        throw new Error(result.error)
+      }
+    },
     updateActionStatus: (id, isActive) => {
-      Action.updateStatus(id, isActive ? 1 : 0)
+      const result = Action.updateStatus({ id, isActive: isActive ? 1 : 0 })
+      if (!result.success) {
+        throw new Error(result.error)
+      }
     },
     getStatusById: (id) => {
-      const response = Action.selectStatusById(id)
-      return response == 1 ? true : false
+      const result = Action.selectStatusById(id)
+      if (!result.success) {
+        throw new Error(result.error)
+      }
+      return result.payload == 1 ? true : false
     },
     getActive: () => {
-      const response = Action.selectActive()
-      return response
+      const result = Action.selectActive()
+      if (!result.success) {
+        throw new Error(result.error)
+      }
+      return result.payload
     },
     getAll: () => {
-      const response = Action.select()
-      if(!response.success) throw new Error(response.error)
-      return response.payload
+      const result = Action.select()
+      if (!result.success) {
+        throw new Error(result.error)
+      }
+      console.log(result)
+      return result.payload
     },
   }
 }

@@ -1,4 +1,4 @@
-import schemaWrapper from '../../../services/schemaWrapper.js'
+import schemaWrapper from '../../../utils/schemaWrapper.js'
 
 const tags = ['User']
 

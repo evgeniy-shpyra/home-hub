@@ -1,11 +1,19 @@
+import {
+  changeDeviceStatusBusEvent,
+  deviceConDiscBusEvent,
+} from '../bus/busEvents.js'
 import { createHash } from '../utils/hash.js'
 
-const deviceService = (dbHandlers) => {
+const deviceService = (dbHandlers, bus) => {
   const { Device, Action } = dbHandlers
 
   return {
     getAll: () => {
-      const deices = Device.getAll()
+      const result = Device.getAll()
+      if (!result.success) {
+        throw new Error(result.message)
+      }
+      const deices = result.payload
       const devicesDto = deices.map((d) => ({
         id: d.id,
         name: d.name,
@@ -16,36 +24,100 @@ const deviceService = (dbHandlers) => {
       return devicesDto
     },
     getById: (id) => {
-      const response = Device.getById(id)
-      if (!response.success) {
-        throw new Error(response.error)
+      const result = Device.getById(id)
+      if (!result.success) {
+        throw new Error(result.message)
       }
-      return response.payload
+
+      return result.payload
     },
-    getDeviceByActive: (actionId) => {
-      const devicesId = Device.getDeviceByActive(actionId)
-      return devicesId
+    getDevicesByActiveActions: () => {
+      const result = Device.getDevicesByActiveActions()
+      if (!result.success) {
+        throw new Error(result.message)
+      }
+      const daData = result.payload
+      const deviceActionDTO = daData.map((da) => ({
+        ...da,
+        deviceStatus: da.deviceStatus ? true : false,
+      }))
+
+      return deviceActionDTO
     },
-    isVerified: (id, password) => {
-      const device = Device.getByIdAndPassword(id, password)
+    getDevicesByActiveActionsById: (deviceId) => {
+      const result = Device.getDevicesByActiveActionsById(deviceId)
+      if (!result.success) {
+        throw new Error(result.message)
+      }
+      const daData = result.payload
+      const deviceActionDTO = daData.map((da) => ({
+        ...da,
+        deviceStatus: da.deviceStatus ? true : false,
+      }))
+
+      return deviceActionDTO
+    },
+    getByName: (name) => {
+      const result = Device.getByName(name)
+      if (!result.success) {
+        throw new Error(result.message)
+      }
+      const device = result.payload
+      return device
+    },
+    isVerified: ({ name, password }) => {
+      const passwordHash = createHash(password)
+      const result = Device.getByNameAndPassword({
+        name,
+        password: passwordHash,
+      })
+      if (!result.success) {
+        throw new Error(result.message)
+      }
+      const device = result.payload
       return device ? true : false
     },
-    updateStatus: (id, isActive) => {
-      Device.updateStatus(id, isActive ? 1 : 0)
+    changeStatus: ({ id, status }) => {
+      bus.emit(changeDeviceStatusBusEvent, {
+        id,
+        status,
+      })
+    },
+    updateStatusInfo: ({ status, id }) => {
+      bus.emit(changeDeviceStatusBusEvent, {
+        id,
+        status,
+      })
     },
     create: ({ name, password }) => {
       const deviceData = {
         name,
         password: createHash(password),
       }
-      const response = Device.create(deviceData)
-      return response
+      const result = Device.create(deviceData)
+      if (!result.success) {
+        throw new Error(result.error)
+      }
     },
     setOnline: (id) => {
-      Device.setOnline(true, id)
+      const result = Device.setOnline({ isOnline: 1, id })
+      if (!result.success) {
+        throw new Error(result.message)
+      }
+      bus.emit(deviceConDiscBusEvent, {
+        id,
+        isOnline: true,
+      })
     },
     setOffline: (id) => {
-      Device.setOnline(false, id)
+      const result = Device.setOnline({ isOnline: 0, id })
+      if (!result.success) {
+        throw new Error(result.message)
+      }
+      bus.emit(deviceConDiscBusEvent, {
+        id,
+        isOnline: false,
+      })
     },
     delete: (id) => {
       const result = Device.deleteById(id)
@@ -54,7 +126,7 @@ const deviceService = (dbHandlers) => {
       }
       const isDeleted = result.payload
       return isDeleted
-    }
+    },
   }
 }
 

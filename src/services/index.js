@@ -4,12 +4,12 @@ import deviceService from './deviceService.js'
 import sensorService from './sensorService.js'
 import userService from './userService.js'
 
-const services = (dbHandlers) => ({
-  action: actionService(dbHandlers),
-  device: deviceService(dbHandlers),
-  user: userService(dbHandlers),
-  sensor: sensorService(dbHandlers),
-  deviceAction: deviceActionService(dbHandlers)
+const services = (dbHandlers, bus) => ({
+  action: actionService(dbHandlers, bus),
+  device: deviceService(dbHandlers, bus),
+  user: userService(dbHandlers, bus),
+  sensor: sensorService(dbHandlers, bus),
+  deviceAction: deviceActionService(dbHandlers, bus)
 })
 
 export default services

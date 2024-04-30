@@ -1,16 +1,17 @@
-import { createHash } from "../utils/hash.js"
+import { actionBusEvent, sensorConDiscBusEvent } from '../bus/busEvents.js'
+import { createHash } from '../utils/hash.js'
 
-const sensorService = (dbHandlers) => {
+const sensorService = (dbHandlers, bus) => {
   const { Sensor } = dbHandlers
-
+  
   return {
     create: ({ name, password, action_id }) => {
       const passwordHash = createHash(password)
-      const result = Sensor.create({name, password: passwordHash, action_id})
-      if(!result.success){
+      const result = Sensor.create({ name, password: passwordHash, action_id })
+      if (!result.success) {
         throw new Error(result.error)
       }
-    }, 
+    },
     getAll: () => {
       const result = Sensor.getAll()
       if (!result.success) {
@@ -22,24 +23,48 @@ const sensorService = (dbHandlers) => {
         name: s.name,
         isOnline: s.isOnline ? true : false,
         action_id: s.action_id,
+        status: s.status ? true : false,
         connectedAt: s.connectedAt,
       }))
 
       return sensorDto
     },
     getById: (id) => {
-      const sensor = Sensor.getById(id)
+      const result = Sensor.getById(id)
+      if (!result.success) {
+        throw new Error(result.error)
+      }
+      const sensor = result.payload
       return sensor
     },
-    isVerified: (id, password) => {
-      const device = Sensor.getByIdAndPassword(id, password)
+    isVerified: ({ id, password }) => {
+      const passwordHash = createHash(password)
+      const result = Sensor.getByIdAndPassword({ id, password: passwordHash })
+      if (!result.success) {
+        throw new Error(result.error)
+      }
+      const device = result.payload
       return device ? true : false
     },
     setOnline: (id) => {
-      Sensor.setOnline(true, id)
+      const result = Sensor.setOnline({ isOnline: 1, id })
+      if (!result.success) {
+        throw new Error(result.error)
+      }
+      bus.emit(sensorConDiscBusEvent, {
+        id,
+        isOnline: true,
+      })
     },
     setOffline: (id) => {
-      Sensor.setOnline(false, id)
+      const result = Sensor.setOnline({ isOnline: 0, id })
+      if (!result.success) {
+        throw new Error(result.error)
+      }
+      bus.emit(sensorConDiscBusEvent, {
+        id,
+        isOnline: false,
+      })
     },
     delete: (id) => {
       const result = Sensor.deleteById(id)
@@ -48,7 +73,14 @@ const sensorService = (dbHandlers) => {
       }
       const isDeleted = result.payload
       return isDeleted
-    }
+    },
+    changeStatus: ({ id, status }) => {
+      const result = Sensor.changeStatus({ id, status: status ? 1 : 0 })
+      if (!result.success) {
+        throw new Error(result.message)
+      }
+      bus.emit(actionBusEvent, {id, status})
+    },
   }
 }
 

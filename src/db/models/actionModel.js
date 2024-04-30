@@ -1,94 +1,49 @@
 import { queryWrapper } from '../../utils/dbTools.js'
-import { buildInsertQuery, buildSelectQuery } from '../../utils/queryCreator.js'
 
 const actionModel = (db) => {
-  const actionTableName = 'actions'
+  const tableName = 'actions'
 
   db.exec(`
-    CREATE TABLE IF NOT EXISTS ${actionTableName} (
-      id VARCHAR(40) PRIMARY KEY,
-      status BOOLEAN NOT NULL,
+    CREATE TABLE IF NOT EXISTS ${tableName} (
+      id INTEGER PRIMARY KEY,
       lastActiveTime DATETIME,
-      name TEXT NOT NULL
+      name TEXT UNIQUE NOT NULL
     )  
   `)
 
   return {
-    create: (data) => {
-      try {
-        const { query, values } = buildInsertQuery(actionTableName, data)
-        const createQuery = db.prepare(query)
-
-        let insertedId = null
-        db.transaction(() => {
-          const info = createQuery.run(...values)
-          insertedId = info.lastInsertRowid
-        })()
-
-        return insertedId
-      } catch (e) {
-        console.log(e)
-        return false
-      }
-    },
-    select: (fields = null) => {
+    create: (name) => {
       return queryWrapper(() => {
-        const { query } = buildSelectQuery(actionTableName, { fields })
+        const createQuery = db.prepare(
+          `INSERT INTO ${tableName} (name) VALUES (?);`
+        )
+        db.transaction(() => {
+          createQuery.run(name)
+        })()
+      })
+    },
+    select: () => {
+      return queryWrapper(() => {
+        const query = `SELECT * FROM ${tableName};`
         const result = db.prepare(query).all()
         return result
       })
     },
     selectStatusById: (id) => {
-      try {
-        const query = `SELECT status FROM ${actionTableName} WHERE id = ?;`
-        const data = db.prepare(query).get(id)
-        return data
-      } catch (e) {
-        console.log(e)
-        return false
-      }
-    },
-    selectActive: () => {
-      try {
-        const query = `SELECT * FROM ${actionTableName} WHERE status = 1;`
-        const data = db.prepare(query).all()
-        return data
-      } catch (e) {
-        console.log(e)
-        return false
-      }
+      return queryWrapper(() => {
+        const query = `SELECT * FROM ${tableName} WHERE id = ?;`
+        const result = db.prepare(query).get(id)
+        return result
+      })
     },
     deleteAll: () => {
-      try {
-        const deleteQuery = db.prepare(`DELETE FROM ${actionTableName};`)
-
-        let changed = null
+      return queryWrapper(() => {
+        const createQuery = db.prepare(`DELETE FROM ${tableName};`)
         db.transaction(() => {
-          const result = deleteQuery.run()
-          changed = result.changes
+          createQuery.run()
         })()
-
-        return changed
-      } catch (e) {
-        console.log(e)
-        return false
-      }
-    },
-    updateStatus: (id, status) => {
-      try {
-        const query = db.prepare(
-          `UPDATE ${actionTableName} SET status = ? WHERE id = ?;`
-        )
-        db.transaction(() => {
-          const info = query.run(status, id)
-        })()
-
-        return true
-      } catch (e) {
-        console.log(e)
-        return false
-      }
-    },
+      })
+    }
   }
 }
 

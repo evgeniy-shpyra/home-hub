@@ -6,8 +6,8 @@ const deviceActionController = (services) => {
       const payload = deviceActionService.getAll()
       return { code: 200, payload }
     },
-    create: (data) => {
-      deviceActionService.addDeviceAction(data)
+    create: ({actionId, deviceId, priority, deviceStatus}) => {
+      deviceActionService.create({actionId, deviceId, priority, deviceStatus})
       return { code: 200 }
     },
   }

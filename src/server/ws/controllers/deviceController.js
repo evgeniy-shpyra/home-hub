@@ -5,32 +5,33 @@ const deviceController = (services) => {
   const actionService = services.action
 
   return {
-    verifyClient: ({ id, password }, handlers) => {
-      const passwordHash = createHash(password)
-      const isVerified = deviceService.isVerified(id, passwordHash)
+    verifyClient: ({ name, password }) => {
+      const isVerified = deviceService.isVerified({ name, password })
       return isVerified
     },
-    onConnect: async ({ id }, handlers) => {
-      deviceService.setOnline(id)
-
-      const activeActions = actionService.getActive()
-      console.log(activeActions)
+    getDevice: (name) => {
+      const device = deviceService.getByName(name)
+      return device
     },
-    onClose: async ({ id }, handlers) => {
-      deviceService.setOffline(id)
+    onConnect: async ({ id }) => {
+      deviceService.setOnline(+id)
     },
-    onMessage: async (data, handlers) => {
-      console.log(data)
-      handlers.device(JSON.stringify({ status: true, action: 'toggleStatus' }))
-      // const message = JSON.parse(data.message)
-      // const payload = message.payload
-      // switch (message.action) {
-      //   case 'changedStatus':
-      //     deviceService.updateStatus(data.id, payload.status)
-      //     break
-      // }
+    onClose: async ({ id }) => {
+      console.log('disconnect')
+      deviceService.setOffline(+id)
     },
-    onError: async (data, handlers) => {
+    onMessage: async ({ message: messageJson, device }) => {
+      const message = JSON.parse(messageJson)
+      switch (message.action) {
+        case 'changeStatus':
+          deviceService.changeStatus({ status: message.status, id: device.id })
+          break
+        case 'status':
+          deviceService.updateStatusInfo({ status: message.status, id: device.id })
+          break
+      }
+    },
+    onError: async (data) => {
       console.log('onError', data)
     },
   }
