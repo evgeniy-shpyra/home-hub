@@ -25,7 +25,6 @@ const initWebsocket = async (server, controllers) => {
               const [name, password] = Buffer.from(authData[1], 'base64')
                 .toString('utf8')
                 .split(':')
-              console.log({ name, password })
               if (name && password) {
                 isVerified = deviceController.verifyClient({ name, password })
               }
@@ -33,11 +32,11 @@ const initWebsocket = async (server, controllers) => {
           } else if (url === '/ws/sensor' && info.req.headers.authorization) {
             const authData = info.req.headers.authorization.split(' ')
             if (authData.length === 2) {
-              const [id, password] = Buffer.from(authData[1], 'base64')
+              const [name, password] = Buffer.from(authData[1], 'base64')
                 .toString('utf8')
                 .split(':')
-              if (id && password) {
-                isVerified = sensorController.verifyClient({ id, password })
+              if (name && password) {
+                isVerified = sensorController.verifyClient({ name, password })
               }
             }
           }
@@ -75,6 +74,7 @@ const initWebsocket = async (server, controllers) => {
       })
 
       socket.on('close', async () => {
+        console.log('close')
         deviceSubscribes[id] && delete deviceSubscribes[id]
         await onClose(device)
       })
@@ -136,13 +136,15 @@ const initWebsocket = async (server, controllers) => {
 
   const sensorSubscribes = {}
   server.get('/ws/sensor', { websocket: true }, async (socket, request) => {
-    const { onConnect, onClose, onMessage, onError } = sensorController
+    const { onConnect, onClose, onMessage, onError, getSensor } = sensorController
     try {
       const authData = request.headers.authorization.split(' ')
-      const [id, password] = Buffer.from(authData[1], 'base64')
+      const [name, password] = Buffer.from(authData[1], 'base64')
         .toString('utf8')
         .split(':')
-
+      const sensor = getSensor(name)
+      const id = sensor.id
+      
       onConnect({ id })
       sensorSubscribes[id] = socket
 

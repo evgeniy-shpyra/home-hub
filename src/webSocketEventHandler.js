@@ -2,8 +2,8 @@ import {
   actionBusEvent,
   deviceConDiscBusEvent,
   sensorConDiscBusEvent,
+  onChangeDeviceStatusBusEvent,
   changeDeviceStatusBusEvent,
-
 } from './bus/busEvents.js'
 
 const webSocketEventHandler = (wsHandlers, bus, services) => {
@@ -12,6 +12,7 @@ const webSocketEventHandler = (wsHandlers, bus, services) => {
   const deviceService = services.device
 
   bus.on(actionBusEvent, (data) => {
+    console.log("actionBusEvent", data)
     const devices = services.device.getDevicesByActiveActions()
     const devicesForWriting = []
 
@@ -43,14 +44,23 @@ const webSocketEventHandler = (wsHandlers, bus, services) => {
     }
   })
 
-  bus.on(changeDeviceStatusBusEvent, (data) => {
+  bus.on(onChangeDeviceStatusBusEvent, (data) => {
     console.log('changeDeviceStatusBusEvent', data)
 
     const payloadForUser = {
       action: 'deviceChangeStatus',
       payload: data,
     }
+
     userWsHandler(payloadForUser)
+  })
+
+  bus.on(changeDeviceStatusBusEvent, ({ id, status }) => {
+    const payloadForDevice = {
+      action: 'changeStatus',
+      status,
+    }
+    deviceWsHandler(payloadForDevice, [id])
   })
 
   bus.on(deviceConDiscBusEvent, (data) => {

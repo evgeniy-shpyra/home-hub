@@ -49,6 +49,20 @@ const sensorModel = (db) => {
         return data
       })
     },
+    getByNameAndPassword: ({ name, password }) => {
+      return queryWrapper(() => {
+        const query = `SELECT * FROM ${tableName} WHERE name = ? AND password = ?;`
+        const result = db.prepare(query).get(name, password)
+        return result
+      })
+    },
+    getByName: (name) => {
+      return queryWrapper(() => {
+        const query = `SELECT * FROM ${tableName} WHERE name = ?;`
+        const result = db.prepare(query).get(name)
+        return result
+      })
+    },
     setOnline: ({ isOnline, id }) => {
       return queryWrapper(() => {
         const createQuery = db.prepare(
@@ -75,7 +89,7 @@ const sensorModel = (db) => {
         return isDeleted
       })
     },
-    changeStatus: ({id, status}) => {
+    changeStatus: ({ id, status }) => {
       return queryWrapper(() => {
         const createQuery = db.prepare(
           `UPDATE ${tableName} SET status = ? WHERE id = ?;`
@@ -84,7 +98,7 @@ const sensorModel = (db) => {
           createQuery.run(status, id)
         })()
       })
-    }
+    },
   }
 }
 

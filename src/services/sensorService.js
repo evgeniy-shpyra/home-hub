@@ -37,14 +37,22 @@ const sensorService = (dbHandlers, bus) => {
       const sensor = result.payload
       return sensor
     },
-    isVerified: ({ id, password }) => {
+    isVerified: ({ name, password }) => {
       const passwordHash = createHash(password)
-      const result = Sensor.getByIdAndPassword({ id, password: passwordHash })
+      const result = Sensor.getByNameAndPassword({ name, password: passwordHash })
       if (!result.success) {
         throw new Error(result.error)
       }
-      const device = result.payload
-      return device ? true : false
+      const sensor = result.payload
+      return sensor ? true : false
+    },
+    getByName: (name) => {
+      const result = Sensor.getByName(name)
+      if (!result.success) {
+        throw new Error(result.message)
+      }
+      const sensor = result.payload
+      return sensor
     },
     setOnline: (id) => {
       const result = Sensor.setOnline({ isOnline: 1, id })

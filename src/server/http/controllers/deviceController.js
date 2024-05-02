@@ -11,6 +11,11 @@ const infoController = (services) => {
 
       return { code: 200 }
     },
+    changeStatus: ({id, status}) => {
+      deviceService.changeStatus({id: +id, status})
+
+      return { code: 200 }
+    },
     delete: ({ id }) => {
       const isDeleted = deviceService.delete(id)
       if (!isDeleted) {

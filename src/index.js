@@ -28,11 +28,10 @@ const app = async () => {
     const alarmApi = initAlarmApi(config.mainServer, 5_000)
 
     alarmApi.subscribe('alarm', (data) => {
-      const actionData = {
-        id: '1',
+      services.sensor.changeStatus({
+        id: 2,
         status: data.isDanger,
-      }
-      // bus.emit(actionBusEvent, actionData)
+      })
     })
 
     webSocketEventHandler(wsHandlers, bus, services)

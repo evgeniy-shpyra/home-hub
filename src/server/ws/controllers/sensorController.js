@@ -2,10 +2,13 @@ const sensorController = (services) => {
   const sensorService = services.sensor
 
   return {
-    verifyClient: ({ id, password }) => {
-      const isVerified = sensorService.isVerified({ id, password })
-
+    verifyClient: ({ name, password }) => {
+      const isVerified = sensorService.isVerified({ name, password })
       return isVerified
+    },
+    getSensor: (name) => {
+      const sensor = sensorService.getByName(name)
+      return sensor
     },
     onConnect: ({ id }) => {
       sensorService.setOnline(+id)
@@ -15,12 +18,14 @@ const sensorController = (services) => {
       sensorService.changeStatus({ status: false, id })
     },
     onMessage: ({ message: messageJson, id }) => {
-      try {
-        const message = JSON.parse(messageJson)
-        const status = message.status
-        sensorService.changeStatus({ status, id })
-      } catch (e) {
-        console.log(e)
+      const message = JSON.parse(messageJson)
+      switch (message.action) {
+        case 'status':
+          sensorService.changeStatus({
+            status: message.status,
+            id,
+          })
+          break
       }
     },
     onError: (data) => {

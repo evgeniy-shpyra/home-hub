@@ -37,9 +37,22 @@ export const getDevicesSchema = schemaWrapper({
 })
 
 
+export const changeStatusDeviceSchema = schemaWrapper({
+  tags,
+  description: 'Change status of the device',
+  body: {
+    type: 'object',
+    properties: {
+      status: { type: "boolean" },
+    },
+    required: ['status'],
+    additionalProperties: false,
+  },
+})
+
 export const deleteDeviceSchema = schemaWrapper({
   tags,
-  description: 'Delete a sensor',
+  description: 'Delete a device',
   successResponse: {
     [204]: {
       description: 'Successful response with no body',

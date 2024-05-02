@@ -21,10 +21,10 @@ const deviceController = (services) => {
       deviceService.setOffline(+id)
     },
     onMessage: async ({ message: messageJson, device }) => {
-      const message = JSON.parse(messageJson)
+      
       switch (message.action) {
         case 'changeStatus':
-          deviceService.changeStatus({ status: message.status, id: device.id })
+          deviceService.onChangeStatus({ status: message.status, id: device.id })
           break
         case 'status':
           deviceService.updateStatusInfo({ status: message.status, id: device.id })

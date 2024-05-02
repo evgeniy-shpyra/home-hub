@@ -5,6 +5,7 @@ import {
   getDevicesActionsSchema,
 } from './schema/deviceActionSchemas.js'
 import {
+  changeStatusDeviceSchema,
   createDeviceSchema,
   deleteDeviceSchema,
   getDevicesSchema,
@@ -30,6 +31,11 @@ const initHttp = async (server, controllers, services) => {
       'device': {
         handler: controllers.device.create,
         schema: createDeviceSchema,
+        isAuth: true,
+      },
+      'devices/:id/change-status': {
+        handler: controllers.device.changeStatus,
+        schema: changeStatusDeviceSchema,
         isAuth: true,
       },
       'sensor': {
@@ -60,8 +66,8 @@ const initHttp = async (server, controllers, services) => {
       'toggle-system': {
         handler: controllers.system.toggle,
         schema: toggleSystemSchema,
-        isAuth: true
-      }
+        isAuth: true,
+      },
     },
     get: {
       'devices': {
@@ -125,7 +131,7 @@ const initHttp = async (server, controllers, services) => {
     try {
       const cookies = parseCookies(req.cookies, req.unsignCookie)
       const userData = verifyAuth(cookies)
-
+     
       if (isRequiredAuth && !userData.isAuth) {
         reply
           .clearCookie('id')

@@ -1,4 +1,5 @@
 import {
+  onChangeDeviceStatusBusEvent,
   changeDeviceStatusBusEvent,
   deviceConDiscBusEvent,
 } from '../bus/busEvents.js'
@@ -77,6 +78,12 @@ const deviceService = (dbHandlers, bus) => {
       const device = result.payload
       return device ? true : false
     },
+    onChangeStatus: ({ id, status }) => {
+      bus.emit(onChangeDeviceStatusBusEvent, {
+        id,
+        status,
+      })
+    },
     changeStatus: ({ id, status }) => {
       bus.emit(changeDeviceStatusBusEvent, {
         id,
@@ -84,7 +91,7 @@ const deviceService = (dbHandlers, bus) => {
       })
     },
     updateStatusInfo: ({ status, id }) => {
-      bus.emit(changeDeviceStatusBusEvent, {
+      bus.emit(onChangeDeviceStatusBusEvent, {
         id,
         status,
       })
