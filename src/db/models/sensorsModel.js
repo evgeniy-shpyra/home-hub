@@ -9,7 +9,6 @@ const sensorModel = (db) => {
       id INTEGER PRIMARY KEY,
       name TEXT UNIQUE NOT NULL,
       password VARCHAR(64) NOT NULL,
-      isOnline BOOLEAN NOT NULL,
       action_id NUMBER NOT NULL,
       status BOOLEAN NOT NULL,
       connectedAt DATETIME,
@@ -21,7 +20,7 @@ const sensorModel = (db) => {
     create: ({ name, password, action_id }) => {
       return queryWrapper(() => {
         const createQuery = db.prepare(
-          `INSERT INTO ${tableName} (name, password, isOnline, action_id, status) VALUES (?, ?, 0, ?, 0);`
+          `INSERT INTO ${tableName} (name, password, action_id, status) VALUES (?, ?, ?, 0);`
         )
         db.transaction(() => {
           createQuery.run(name, password, action_id)
@@ -61,16 +60,6 @@ const sensorModel = (db) => {
         const query = `SELECT * FROM ${tableName} WHERE name = ?;`
         const result = db.prepare(query).get(name)
         return result
-      })
-    },
-    setOnline: ({ isOnline, id }) => {
-      return queryWrapper(() => {
-        const createQuery = db.prepare(
-          `UPDATE ${tableName} SET isOnline = ?, connectedAt = ? WHERE id = ?;`
-        )
-        db.transaction(() => {
-          createQuery.run(isOnline, new Date().toISOString(), id)
-        })()
       })
     },
     deleteAll: () => {

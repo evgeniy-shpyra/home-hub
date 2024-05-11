@@ -1,8 +1,4 @@
-import {
-  onChangeDeviceStatusBusEvent,
-  changeDeviceStatusBusEvent,
-  deviceConDiscBusEvent,
-} from '../bus/busEvents.js'
+import { changeDeviceStatusBusEvent } from '../bus/busEvents.js'
 import { createHash } from '../utils/hash.js'
 
 const deviceService = (dbHandlers, bus) => {
@@ -32,32 +28,6 @@ const deviceService = (dbHandlers, bus) => {
 
       return result.payload
     },
-    getDevicesByActiveActions: () => {
-      const result = Device.getDevicesByActiveActions()
-      if (!result.success) {
-        throw new Error(result.message)
-      }
-      const daData = result.payload
-      const deviceActionDTO = daData.map((da) => ({
-        ...da,
-        deviceStatus: da.deviceStatus ? true : false,
-      }))
-
-      return deviceActionDTO
-    },
-    getDevicesByActiveActionsById: (deviceId) => {
-      const result = Device.getDevicesByActiveActionsById(deviceId)
-      if (!result.success) {
-        throw new Error(result.message)
-      }
-      const daData = result.payload
-      const deviceActionDTO = daData.map((da) => ({
-        ...da,
-        deviceStatus: da.deviceStatus ? true : false,
-      }))
-
-      return deviceActionDTO
-    },
     getByName: (name) => {
       const result = Device.getByName(name)
       if (!result.success) {
@@ -66,33 +36,28 @@ const deviceService = (dbHandlers, bus) => {
       const device = result.payload
       return device
     },
-    isVerified: ({ name, password }) => {
-      const passwordHash = createHash(password)
-      const result = Device.getByNameAndPassword({
-        name,
-        password: passwordHash,
-      })
+    getDevicesByActiveActions: () => {
+      const result = Device.getDevicesByActiveActions()
       if (!result.success) {
         throw new Error(result.message)
       }
-      const device = result.payload
-      return device ? true : false
+
+      return result.payload
     },
-    onChangeStatus: ({ id, status }) => {
-      bus.emit(onChangeDeviceStatusBusEvent, {
-        id,
-        status,
-      })
+    getDevicesByActiveActionsById: (deviceId) => {
+      const result = Device.getDevicesByActiveActionsById(deviceId)
+      if (!result.success) {
+        throw new Error(result.message)
+      }
+
+      return result.payload
     },
-    changeStatus: ({ id, status }) => {
+    changeStatus: function ({ id, status }) {
+      const device = this.getById(id)
+      if (!device) throw new Error("Device isn't exist")
+
       bus.emit(changeDeviceStatusBusEvent, {
-        id,
-        status,
-      })
-    },
-    updateStatusInfo: ({ status, id }) => {
-      bus.emit(onChangeDeviceStatusBusEvent, {
-        id,
+        name: device.name,
         status,
       })
     },
@@ -105,26 +70,6 @@ const deviceService = (dbHandlers, bus) => {
       if (!result.success) {
         throw new Error(result.error)
       }
-    },
-    setOnline: (id) => {
-      const result = Device.setOnline({ isOnline: 1, id })
-      if (!result.success) {
-        throw new Error(result.message)
-      }
-      bus.emit(deviceConDiscBusEvent, {
-        id,
-        isOnline: true,
-      })
-    },
-    setOffline: (id) => {
-      const result = Device.setOnline({ isOnline: 0, id })
-      if (!result.success) {
-        throw new Error(result.message)
-      }
-      bus.emit(deviceConDiscBusEvent, {
-        id,
-        isOnline: false,
-      })
     },
     delete: (id) => {
       const result = Device.deleteById(id)

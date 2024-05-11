@@ -10,36 +10,42 @@ import initWsControllers from './server/ws/controllers/index.js'
 import { EventEmitter } from 'node:events'
 import { actionBusEvent } from './bus/busEvents.js'
 import webSocketEventHandler from './webSocketEventHandler.js'
+import initMqtt from './mqtt/initMqtt.js'
 
 const app = async () => {
-  try {
-    const bus = new EventEmitter()
+  const bus = new EventEmitter()
 
-    const db = initDb()
-    const server = await Server(config.server)
-    const services = Services(db.models, bus)
+  const db = initDb()
+  const server = await Server(config.server)
+  const services = Services(db.models, bus)
 
-    const httpControllers = initHttpControllers(services)
-    await initHttp(server.server, httpControllers, services)
+  const httpControllers = initHttpControllers(services)
+  await initHttp(server.server, httpControllers, services)
 
-    const wsControllers = initWsControllers(services)
-    const wsHandlers = await initWebsocket(server.server, wsControllers)
+  const wsControllers = initWsControllers(services)
+  const wsHandlers = await initWebsocket(server.server, wsControllers)
+  const mqtt = await initMqtt(config.mqtt, services, bus)
 
-    const alarmApi = initAlarmApi(config.mainServer, 5_000)
+  const alarmApi = initAlarmApi(config.mainServer, 5_000)
 
-    alarmApi.subscribe('alarm', (data) => {
-      services.sensor.changeStatus({
-        id: 2,
-        status: data.isDanger,
-      })
+  alarmApi.subscribe('alarm', (data) => {
+    services.sensor.changeStatus({
+      id: 2,
+      status: data.isDanger,
     })
+  })
 
-    webSocketEventHandler(wsHandlers, bus, services)
-    await server.start()
-  } catch (e) {
-    console.log(e)
+  webSocketEventHandler(wsHandlers, mqtt.handlers, bus, services)
+  await server.start()
+
+  return {
+    stop: () => {
+      server.stop()
+      mqtt.stop()
+      alarmApi.stop()
+      db.close()
+    },
   }
 }
 
-console.log('start')
-await app()
+export default app

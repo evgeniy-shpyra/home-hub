@@ -1,6 +1,5 @@
 import WebSocket from 'ws'
-import wait from '../utils/wait.js'
-import { scheduler } from 'node:timers/promises'
+import { setTimeout as sleep } from 'node:timers/promises'
 
 const initAlarmApi = (opt = {}) => {
   const host = opt.host
@@ -42,6 +41,7 @@ const initAlarmApi = (opt = {}) => {
     })
   }
 
+  let isRunning = true
   return {
     subscribe: async function (route, onMessage) {
       const context = this
@@ -49,14 +49,14 @@ const initAlarmApi = (opt = {}) => {
       let ws = null
       let isConnected = false
       while (!isConnected) {
+        if (!isRunning) return
         try {
           ws = await tryToConnect(route)
           isConnected = true
           if (!ws) throw new Error('Connection error')
         } catch (e) {
-          // console.log(e)
           console.error('Connection to alarm api error')
-          await scheduler.wait(tryToConnectInterval)
+          await sleep(tryToConnectInterval)
         }
       }
 
@@ -80,6 +80,14 @@ const initAlarmApi = (opt = {}) => {
       for (const route in subscriptions) {
         subscriptions[route] && (await subscriptions[route].close())
       }
+    },
+    stop: () => {
+      for (const route in subscriptions) {
+        subscriptions[route].close()
+      }
+      isRunning = false
+
+      console.log('Alarm api has been stopped')
     },
   }
 }

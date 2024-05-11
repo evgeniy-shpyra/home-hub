@@ -34,7 +34,7 @@ const deviceModel = (db) => {
         return result
       })
     },
-    getById: () => {
+    getById: (id) => {
       return queryWrapper(() => {
         const query = `SELECT * FROM ${deviceTableName} WHERE id = ?;`
         const result = db.prepare(query).get(id)

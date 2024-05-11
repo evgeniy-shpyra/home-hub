@@ -8,5 +8,9 @@
     "port": 9000,
     "host": "0.0.0.0",
     "cookieSecret": "my-secret"
+  },
+  "mqtt": {
+    "host": "localhost",
+    "port": "1883"
   }
 }

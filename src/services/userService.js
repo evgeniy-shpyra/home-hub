@@ -1,7 +1,8 @@
 import crypto from 'node:crypto'
 import { createHash } from '../utils/hash.js'
+import { userConnectedBusEvent } from '../bus/busEvents.js'
 
-const userService = (dbHandlers) => {
+const userService = (dbHandlers, bus) => {
   const { User } = dbHandlers
 
   return {
@@ -79,6 +80,9 @@ const userService = (dbHandlers) => {
         lastOnlineTime: u.lastOnlineTime,
       }))
       return usersDto
+    },
+    connect: (uuid) => {
+      bus.emit(userConnectedBusEvent, { uuid })
     },
   }
 }
