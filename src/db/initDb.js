@@ -7,7 +7,8 @@ import deviceActionModel from './models/deviceActionModel.js'
 import path from 'node:path'
 
 const initDb = () => {
-  const db = new Database(path.resolve('./src/db/home.db'))
+
+  const db = new Database(path.resolve('./db/home.db'))
 
   const Device = deviceModel(db)
   const Action = actionModel(db)
