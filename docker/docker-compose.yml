@@ -5,6 +5,7 @@ services:
   mqtt:
     image: eclipse-mosquitto
     container_name: mqtt
+    restart: always
     volumes:
       - ./mosquitto:/mosquitto
       - ./mosquitto/data:/mosquitto/data
@@ -19,7 +20,7 @@ services:
     build: ../
     depends_on:
       - mqtt
-    restart: always 
+    restart: always
     volumes:
       - ./db/home.db:/data/home.db
     ports:
