@@ -104,7 +104,7 @@ const deviceModel = (db) => {
         const query = `SELECT device.id as deviceId, device.name as deviceName,
                               actionDevice.deviceStatus, actionDevice.priority, 
                               action.id as actionId, action.name as actionName,
-                              sensor.name as sensorName, sensor.id as sensorId
+                              sensor.name as sensorName, sensor.id as sensorId, sensor.status as sensorStatus
                        FROM ${deviceTableName} as device
                        INNER JOIN ${deviceActionTableName} as actionDevice
                        ON device.id = actionDevice.deviceId

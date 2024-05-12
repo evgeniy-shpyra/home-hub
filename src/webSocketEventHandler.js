@@ -35,8 +35,10 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
     }
 
     for (const device of devicesForWriting) {
+      console.log(device)
       const payloadForDevice = {
-        status: device.sensorStatus,
+        deviceStatus: device.deviceStatus,
+        sensorStatus: device.sensorStatus,
         isAction: true,
       }
 
@@ -55,6 +57,7 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
     console.log('deviceStatusGetBusEvent', device)
 
     const deviceByAction = services.device.getDevicesByActiveActionsById(device.id)
+
     if (!deviceByAction.length) return
 
     const deviceMaxPriority = {}
@@ -63,16 +66,19 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
     for (const data of deviceByAction) {
       if (data.priority > maxPriority) {
         maxPriority = data.priority
-        deviceMaxPriority.status = data.deviceStatus ? true : false
-        deviceMaxPriority.isAction = true
+        deviceMaxPriority.deviceStatus = data.deviceStatus ? true : false
+        deviceMaxPriority.sensorStatus = data.sensorStatus ? true : false
         deviceMaxPriority.name = data.deviceName
       }
     }
 
+   
+
     deviceMqttHandler.setStatus(
       {
-        status: deviceMaxPriority.status,
-        isAction: deviceMaxPriority.isAction,
+        deviceStatus: deviceMaxPriority.deviceStatus,
+        sensorStatus: deviceMaxPriority.sensorStatus,
+        isAction: true,
       },
       deviceMaxPriority.name
     )
@@ -103,7 +109,7 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
   // handle changed status of device | hub -> device
   bus.on(changeDeviceStatusBusEvent, (device) => {
     const payloadForDevice = {
-      status: device.status,
+      deviceStatus: device.status,
       isAction: false,
     }
     deviceMqttHandler.setStatus(payloadForDevice, device.name)
