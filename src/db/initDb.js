@@ -4,9 +4,10 @@ import actionModel from './models/actionModel.js'
 import userModel from './models/userModel.js'
 import sensorModel from './models/sensorsModel.js'
 import deviceActionModel from './models/deviceActionModel.js'
+import path from 'node:path'
 
 const initDb = () => {
-  const db = new Database('./db/home.db')
+  const db = new Database(path.resolve('./src/db/home.db'))
 
   const Device = deviceModel(db)
   const Action = actionModel(db)
