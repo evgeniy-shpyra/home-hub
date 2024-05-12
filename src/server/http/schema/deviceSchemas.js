@@ -27,7 +27,7 @@ export const getDevicesSchema = schemaWrapper({
         properties: {
           id: { type: 'number' },
           name: { type: 'string' },
-          connectedAt: { type: 'string' }
+          lastActionAt: { type: 'string' }
         }
       }
     }

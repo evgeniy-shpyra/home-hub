@@ -30,7 +30,7 @@ export const getSensorsSchema = schemaWrapper({
           action_id: { type: 'number' },
           status: { type: 'boolean' },
           name: { type: 'string' },
-          connectedAt: { type: 'string' }
+          lastActionAt: { type: 'string' }
         }
       }
     }

@@ -43,7 +43,7 @@ const initHttp = async (server, controllers, services) => {
         schema: createSensorSchema,
         isAuth: true
       },
-      actions: {
+      action: {
         handler: controllers.action.create,
         schema: createActionSchema,
         isAuth: true
