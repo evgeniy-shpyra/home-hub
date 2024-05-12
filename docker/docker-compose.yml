@@ -22,7 +22,7 @@ services:
       - mqtt
     restart: always
     volumes:
-      - ./db/home.db:/data/home.db
+      - ../src/db:/db
     ports:
       - '9000:9000'
     networks:
