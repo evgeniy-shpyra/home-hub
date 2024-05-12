@@ -8,18 +8,18 @@ export const createActionSchema = schemaWrapper({
   body: {
     type: 'object',
     properties: {
-      name: { type: 'string' },
+      name: { type: 'string' }
     },
     required: ['name'],
-    additionalProperties: false,
-  },
+    additionalProperties: false
+  }
 })
 
 export const getActionsSchema = schemaWrapper({
   tags,
   description: 'Get all actions',
   successResponse: {
-    [200]: {
+    200: {
       description: 'Successful response with no body',
       type: 'array',
       items: {
@@ -27,9 +27,9 @@ export const getActionsSchema = schemaWrapper({
         properties: {
           id: { type: 'number' },
           lastActiveTime: { type: 'string' },
-          name: { type: 'string' },
-        },
-      },
-    },
-  },
+          name: { type: 'string' }
+        }
+      }
+    }
+  }
 })

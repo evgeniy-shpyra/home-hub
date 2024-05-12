@@ -4,9 +4,9 @@ const handlers = (client) => {
   return {
     device: deviceHandlers(client),
     ping: async () => {
-      const topic = `ping`
+      const topic = 'ping'
       await client.publish(topic, 'true')
-    },
+    }
   }
 }
 

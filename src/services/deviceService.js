@@ -2,7 +2,7 @@ import { changeDeviceStatusBusEvent } from '../bus/busEvents.js'
 import { createHash } from '../utils/hash.js'
 
 const deviceService = (dbHandlers, bus) => {
-  const { Device, Action } = dbHandlers
+  const { Device } = dbHandlers
 
   return {
     getAll: () => {
@@ -14,9 +14,9 @@ const deviceService = (dbHandlers, bus) => {
       const devicesDto = deices.map((d) => ({
         id: d.id,
         name: d.name,
-        isOnline: d.isOnline ? true : false,
-        status: d.status ? true : false,
-        connectedAt: d.connectedAt,
+        isOnline: !!d.isOnline,
+        status: !!d.status,
+        connectedAt: d.connectedAt
       }))
       return devicesDto
     },
@@ -58,13 +58,13 @@ const deviceService = (dbHandlers, bus) => {
 
       bus.emit(changeDeviceStatusBusEvent, {
         name: device.name,
-        status,
+        status
       })
     },
     create: ({ name, password }) => {
       const deviceData = {
         name,
-        password: createHash(password),
+        password: createHash(password)
       }
       const result = Device.create(deviceData)
       if (!result.success) {
@@ -78,7 +78,7 @@ const deviceService = (dbHandlers, bus) => {
       }
       const isDeleted = result.payload
       return isDeleted
-    },
+    }
   }
 }
 

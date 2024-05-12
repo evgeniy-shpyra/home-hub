@@ -8,4 +8,3 @@ export const deviceStatusGetBusEvent = 'deviceStatusGet'
 export const changeDeviceStatusBusEvent = 'changeDeviceStatus'
 
 export const userConnectedBusEvent = 'userConnected'
-

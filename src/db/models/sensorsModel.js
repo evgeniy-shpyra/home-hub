@@ -87,7 +87,7 @@ const sensorModel = (db) => {
           createQuery.run(status, id)
         })()
       })
-    },
+    }
   }
 }
 

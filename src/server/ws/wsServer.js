@@ -1,9 +1,7 @@
 import websocket from '@fastify/websocket'
 import crypto from 'node:crypto'
 const initWebsocket = async (server, controllers) => {
-  const deviceController = controllers.device
   const userController = controllers.user
-  const sensorController = controllers.sensor
 
   await server.register(websocket, {
     errorHandler: function (error, socket, req, reply) {
@@ -26,17 +24,16 @@ const initWebsocket = async (server, controllers) => {
           console.log(e)
           next(false)
         }
-      },
-    },
+      }
+    }
   })
 
   const userSubscribes = {}
   server.get('/ws/user', { websocket: true }, async (socket, request) => {
+    const { onConnect, onClose, onMessage, onError } = userController
+    const uuid = request.headers.id
+    const subscribersUuid = uuid || crypto.randomUUID()
     try {
-      const { onConnect, onClose, onMessage, onError } = userController
-      const uuid = request.headers.id
-      const subscribersUuid = uuid || crypto.randomUUID()
-
       await onConnect({ uuid })
 
       userSubscribes[subscribersUuid] = socket
@@ -67,7 +64,7 @@ const initWebsocket = async (server, controllers) => {
   }
 
   const handlers = {
-    user: sendDataToUsers,
+    user: sendDataToUsers
   }
 
   return handlers

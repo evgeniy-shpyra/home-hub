@@ -116,7 +116,7 @@ const deviceModel = (db) => {
         const result = db.prepare(query).all(deviceId)
         return result
       })
-    },
+    }
   }
 }
 

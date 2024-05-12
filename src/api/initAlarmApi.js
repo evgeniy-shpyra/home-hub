@@ -14,7 +14,7 @@ const initAlarmApi = (opt = {}) => {
   }
 
   const headers = {
-    Authorization: `Bearer ${token}`,
+    Authorization: `Bearer ${token}`
   }
 
   const subscriptions = {}
@@ -22,7 +22,7 @@ const initAlarmApi = (opt = {}) => {
   const tryToConnect = (route) => {
     return new Promise((res, rej) => {
       const ws = new WebSocket(`ws://${host}:${port}/${route}`, {
-        headers,
+        headers
       })
 
       if (!subscriptions[route]) {
@@ -34,7 +34,7 @@ const initAlarmApi = (opt = {}) => {
       ws.on('error', (error) => {
         rej(error)
       })
-      ws.on('open', function open() {
+      ws.on('open', function open () {
         res(ws)
         console.log('Open connection')
       })
@@ -60,7 +60,7 @@ const initAlarmApi = (opt = {}) => {
         }
       }
 
-      ws.on('close', function close() {
+      ws.on('close', function close () {
         console.log('Disconnected from alarm api')
         setTimeout(
           context.subscribe.bind(context, route, onMessage),
@@ -68,7 +68,7 @@ const initAlarmApi = (opt = {}) => {
         )
       })
 
-      ws.on('message', function incoming(data) {
+      ws.on('message', function incoming (data) {
         onMessage && onMessage(JSON.parse(data.toString()))
       })
     },
@@ -88,7 +88,7 @@ const initAlarmApi = (opt = {}) => {
       isRunning = false
 
       console.log('Alarm api has been stopped')
-    },
+    }
   }
 }
 

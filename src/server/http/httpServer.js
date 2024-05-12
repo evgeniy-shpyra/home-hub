@@ -2,18 +2,18 @@ import parseCookies from '../../utils/parseCookies.js'
 import { createActionSchema, getActionsSchema } from './schema/actionSchemas.js'
 import {
   createDeviceActionSchema,
-  getDevicesActionsSchema,
+  getDevicesActionsSchema
 } from './schema/deviceActionSchemas.js'
 import {
   changeStatusDeviceSchema,
   createDeviceSchema,
   deleteDeviceSchema,
-  getDevicesSchema,
+  getDevicesSchema
 } from './schema/deviceSchemas.js'
 import {
   createSensorSchema,
   deleteSensorSchema,
-  getSensorsSchema,
+  getSensorsSchema
 } from './schema/sensorSchemas.js'
 import { toggleSystemSchema } from './schema/systemSchemas.js'
 
@@ -22,102 +22,102 @@ import {
   deleteUserSchema,
   getUserSchema,
   getUsersSchema,
-  loginUserSchema,
+  loginUserSchema
 } from './schema/userSchemas.js'
 
 const initHttp = async (server, controllers, services) => {
   const combinedControllers = {
     post: {
-      'device': {
+      device: {
         handler: controllers.device.create,
         schema: createDeviceSchema,
-        isAuth: true,
+        isAuth: true
       },
       'devices/:id/change-status': {
         handler: controllers.device.changeStatus,
         schema: changeStatusDeviceSchema,
-        isAuth: true,
+        isAuth: true
       },
-      'sensor': {
+      sensor: {
         handler: controllers.sensor.create,
         schema: createSensorSchema,
-        isAuth: true,
+        isAuth: true
       },
-      'actions': {
+      actions: {
         handler: controllers.action.create,
         schema: createActionSchema,
-        isAuth: true,
+        isAuth: true
       },
       'device-action': {
         handler: controllers.deviceAction.create,
         schema: createDeviceActionSchema,
-        isAuth: true,
+        isAuth: true
       },
-      'user': {
+      user: {
         handler: controllers.user.create,
         schema: createUserSchema,
-        isAuth: true,
+        isAuth: true
       },
-      'login': {
+      login: {
         handler: controllers.user.login,
         schema: loginUserSchema,
-        isAuth: false,
+        isAuth: false
       },
       'toggle-system': {
         handler: controllers.system.toggle,
         schema: toggleSystemSchema,
-        isAuth: true,
-      },
+        isAuth: true
+      }
     },
     get: {
-      'devices': {
+      devices: {
         handler: controllers.device.getAll,
         schema: getDevicesSchema,
-        isAuth: true,
+        isAuth: true
       },
-      'actions': {
+      actions: {
         handler: controllers.action.getAll,
         schema: getActionsSchema,
-        isAuth: true,
+        isAuth: true
       },
-      'user': {
+      user: {
         handler: controllers.user.get,
         schema: getUserSchema,
-        isAuth: true,
+        isAuth: true
       },
-      'users': {
+      users: {
         handler: controllers.user.getAll,
         schema: getUsersSchema,
-        isAuth: true,
+        isAuth: true
       },
       'devices-actions': {
         handler: controllers.deviceAction.getAll,
         schema: getDevicesActionsSchema,
-        isAuth: true,
+        isAuth: true
       },
-      'sensors': {
+      sensors: {
         handler: controllers.sensor.getAll,
         schema: getSensorsSchema,
-        isAuth: true,
-      },
+        isAuth: true
+      }
     },
     delete: {
       'user/:id': {
         handler: controllers.user.delete,
         schema: deleteUserSchema,
-        isAuth: true,
+        isAuth: true
       },
       'sensor/:id': {
         handler: controllers.sensor.delete,
         schema: deleteSensorSchema,
-        isAuth: true,
+        isAuth: true
       },
       'device/:id': {
         handler: controllers.device.delete,
         schema: deleteDeviceSchema,
-        isAuth: true,
-      },
-    },
+        isAuth: true
+      }
+    }
   }
 
   const verifyAuth = (cookies) => {
@@ -131,7 +131,7 @@ const initHttp = async (server, controllers, services) => {
     try {
       const cookies = parseCookies(req.cookies, req.unsignCookie)
       const userData = verifyAuth(cookies)
-     
+
       if (isRequiredAuth && !userData.isAuth) {
         reply
           .clearCookie('id')
@@ -142,7 +142,7 @@ const initHttp = async (server, controllers, services) => {
 
       const user = userData.user
 
-      let body = req.body || {}
+      const body = req.body || {}
       const params = req.params || {}
 
       const response = await handler({ ...body, ...params }, user)
@@ -150,12 +150,12 @@ const initHttp = async (server, controllers, services) => {
       if (response && response.user) {
         reply.setCookie('id', response.user.uuid, {
           signed: true,
-          path: '/',
+          path: '/'
         })
       } else if (user) {
         reply.setCookie('id', user.uuid, {
           signed: true,
-          path: '/',
+          path: '/'
         })
       }
 

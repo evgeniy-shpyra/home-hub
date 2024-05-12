@@ -20,7 +20,6 @@ const server = async (opt = {}) => {
   await fastify.register(swagger, {})
   await fastify.register(swaggerUi, swaggerConfig)
 
-
   fastify.register(fastifyCookie, {
     secret: cookieSecret,
     hook: 'onRequest',

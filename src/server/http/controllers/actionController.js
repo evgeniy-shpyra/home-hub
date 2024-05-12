@@ -10,7 +10,7 @@ const actionController = (services) => {
     getAll: () => {
       const payload = actionService.getAll()
       return { code: 200, payload }
-    },
+    }
   }
 }
 

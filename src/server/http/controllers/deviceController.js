@@ -11,8 +11,8 @@ const infoController = (services) => {
 
       return { code: 200 }
     },
-    changeStatus: ({id, status}) => {
-      deviceService.changeStatus({id: +id, status})
+    changeStatus: ({ id, status }) => {
+      deviceService.changeStatus({ id: +id, status })
 
       return { code: 200 }
     },
@@ -21,11 +21,11 @@ const infoController = (services) => {
       if (!isDeleted) {
         return {
           code: 400,
-          payload: { error: `Can't delete device with id ${id}` },
+          payload: { error: `Can't delete device with id ${id}` }
         }
       }
       return { code: 204 }
-    },
+    }
   }
 }
 

@@ -2,7 +2,7 @@ const swaggerConfig = {
   routePrefix: '/documentation',
   uiConfig: {
     docExpansion: 'full',
-    deepLinking: false,
+    deepLinking: false
   },
   uiHooks: {
     onRequest: function (request, reply, next) {
@@ -10,14 +10,14 @@ const swaggerConfig = {
     },
     preHandler: function (request, reply, next) {
       next()
-    },
+    }
   },
   staticCSP: true,
   transformStaticCSP: (header) => header,
   transformSpecification: (swaggerObject, request, reply) => {
     return swaggerObject
   },
-  transformSpecificationClone: true,
+  transformSpecificationClone: true
 }
 
 export default swaggerConfig

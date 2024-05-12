@@ -13,7 +13,7 @@ const initMqtt = async ({ host, port }, services, bus) => {
     stop: async () => {
       await client.end()
       console.log('Mqtt has been stopped')
-    },
+    }
   }
 }
 

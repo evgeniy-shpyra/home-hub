@@ -16,7 +16,7 @@ const deviceActionModel = (db) => {
       CONSTRAINT unique_action_device UNIQUE (actionId, deviceId)
     )
   `)
- 
+
   return {
     create: function ({ actionId, deviceId, priority }) {
       return queryWrapper(() => {
@@ -24,7 +24,7 @@ const deviceActionModel = (db) => {
           `INSERT INTO ${deviceActionTableName} (actionId, deviceId, priority) VALUES (?, ?, ?, ?);`
         )
         db.transaction(() => {
-          createQuery.run(actionId, deviceId, priority )
+          createQuery.run(actionId, deviceId, priority)
         })()
       })
     },
@@ -42,7 +42,7 @@ const deviceActionModel = (db) => {
         const isDeleted = result.changes === 1
         return isDeleted
       })
-    },
+    }
   }
 }
 

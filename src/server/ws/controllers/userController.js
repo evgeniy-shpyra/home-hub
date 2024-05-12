@@ -18,7 +18,7 @@ const userController = (services) => {
     },
     onError: async (data) => {
       console.log('onError', data)
-    },
+    }
   }
 }
 

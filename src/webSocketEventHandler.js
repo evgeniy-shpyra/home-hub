@@ -3,7 +3,7 @@ import {
   deviceStatusSetBusEvent,
   changeDeviceStatusBusEvent,
   userConnectedBusEvent,
-  deviceStatusGetBusEvent,
+  deviceStatusGetBusEvent
 } from './bus/busEvents.js'
 
 const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
@@ -30,7 +30,7 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
       }
       devicesForWriting.push({
         ...device,
-        sensorStatus: device.sensorStatus ? true : false,
+        sensorStatus: !!device.sensorStatus
       })
     }
 
@@ -39,7 +39,7 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
       const payloadForDevice = {
         deviceStatus: device.deviceStatus,
         sensorStatus: device.sensorStatus,
-        isAction: true,
+        isAction: true
       }
 
       deviceMqttHandler.setStatus(payloadForDevice, device.deviceName)
@@ -47,7 +47,7 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
 
     const payloadForUser = {
       action: 'changeSensorStatus',
-      payload: data,
+      payload: data
     }
     userWsHandler(payloadForUser)
   })
@@ -66,26 +66,24 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
     for (const data of deviceByAction) {
       if (data.priority > maxPriority) {
         maxPriority = data.priority
-        deviceMaxPriority.deviceStatus = data.deviceStatus ? true : false
-        deviceMaxPriority.sensorStatus = data.sensorStatus ? true : false
+        deviceMaxPriority.deviceStatus = !!data.deviceStatus
+        deviceMaxPriority.sensorStatus = !!data.sensorStatus
         deviceMaxPriority.name = data.deviceName
       }
     }
-
-   
 
     deviceMqttHandler.setStatus(
       {
         deviceStatus: deviceMaxPriority.deviceStatus,
         sensorStatus: deviceMaxPriority.sensorStatus,
-        isAction: true,
+        isAction: true
       },
       deviceMaxPriority.name
     )
-   
+
     userWsHandler({
       action: 'deviceConDisc',
-      payload: device,
+      payload: device
     })
   })
 
@@ -95,7 +93,7 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
 
     const payloadForUser = {
       action: 'deviceStatus',
-      payload: data,
+      payload: data
     }
 
     userWsHandler(payloadForUser)
@@ -110,13 +108,10 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
   bus.on(changeDeviceStatusBusEvent, (device) => {
     const payloadForDevice = {
       deviceStatus: device.status,
-      isAction: false,
+      isAction: false
     }
     deviceMqttHandler.setStatus(payloadForDevice, device.name)
   })
-
-
-
 }
 
 export default webSocketEventHandler

@@ -21,10 +21,10 @@ const initDb = () => {
   return {
     close: () => {
       db.close()
-      console.log("Db has been stopped")
+      console.log('Db has been stopped')
     },
-    models,
-  } 
+    models
+  }
 }
 
 export default initDb

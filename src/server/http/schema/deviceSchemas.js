@@ -9,18 +9,18 @@ export const createDeviceSchema = schemaWrapper({
     type: 'object',
     properties: {
       name: { type: 'string' },
-      password: { type: 'string' },
+      password: { type: 'string' }
     },
     required: ['name', 'password'],
-    additionalProperties: false,
-  },
+    additionalProperties: false
+  }
 })
 
 export const getDevicesSchema = schemaWrapper({
   tags,
   description: 'Get all devices',
   successResponse: {
-    [200]: {
+    200: {
       description: 'Successful response with no body',
       type: 'array',
       items: {
@@ -28,13 +28,12 @@ export const getDevicesSchema = schemaWrapper({
         properties: {
           id: { type: 'number' },
           name: { type: 'string' },
-          connectedAt: { type: 'string' },
-        },
-      },
-    },
-  },
+          connectedAt: { type: 'string' }
+        }
+      }
+    }
+  }
 })
-
 
 export const changeStatusDeviceSchema = schemaWrapper({
   tags,
@@ -42,20 +41,20 @@ export const changeStatusDeviceSchema = schemaWrapper({
   body: {
     type: 'object',
     properties: {
-      status: { type: "boolean" },
+      status: { type: 'boolean' }
     },
     required: ['status'],
-    additionalProperties: false,
-  },
+    additionalProperties: false
+  }
 })
 
 export const deleteDeviceSchema = schemaWrapper({
   tags,
   description: 'Delete a device',
   successResponse: {
-    [204]: {
+    204: {
       description: 'Successful response with no body',
-      type: 'null',
-    },
-  },
+      type: 'null'
+    }
+  }
 })

@@ -1,6 +1,6 @@
 const systemController = (services) => {
   return {
-    toggleSystem: () => {},
+    toggleSystem: () => {}
   }
 }
 

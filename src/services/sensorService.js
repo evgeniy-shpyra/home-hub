@@ -3,7 +3,7 @@ import { createHash } from '../utils/hash.js'
 
 const sensorService = (dbHandlers, bus) => {
   const { Sensor } = dbHandlers
-  
+
   return {
     create: ({ name, password, action_id }) => {
       const passwordHash = createHash(password)
@@ -22,8 +22,8 @@ const sensorService = (dbHandlers, bus) => {
         id: s.id,
         name: s.name,
         action_id: s.action_id,
-        status: s.status ? true : false,
-        connectedAt: s.connectedAt,
+        status: !!s.status,
+        connectedAt: s.connectedAt
       }))
 
       return sensorDto
@@ -57,8 +57,8 @@ const sensorService = (dbHandlers, bus) => {
       if (!result.success) {
         throw new Error(result.message)
       }
-      bus.emit(actionBusEvent, {id, status})
-    },
+      bus.emit(actionBusEvent, { id, status })
+    }
   }
 }
 
