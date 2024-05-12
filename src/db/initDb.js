@@ -6,7 +6,7 @@ import sensorModel from './models/sensorsModel.js'
 import deviceActionModel from './models/deviceActionModel.js'
 
 const initDb = () => {
-  const db = new Database('home.db')
+  const db = new Database('./db/home.db')
 
   const Device = deviceModel(db)
   const Action = actionModel(db)

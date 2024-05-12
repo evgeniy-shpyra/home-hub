@@ -10,7 +10,7 @@
     "cookieSecret": "my-secret"
   },
   "mqtt": {
-    "host": "localhost",
+    "host": "mqtt",
     "port": "1883"
   }
 }
