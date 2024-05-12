@@ -1,7 +1,8 @@
 import crypto from 'node:crypto'
 import { createHash } from '../utils/hash.js'
+import { userConnectedBusEvent } from '../bus/busEvents.js'
 
-const userService = (dbHandlers) => {
+const userService = (dbHandlers, bus) => {
   const { User } = dbHandlers
 
   return {
@@ -46,7 +47,7 @@ const userService = (dbHandlers) => {
       const passwordHash = createHash(password)
       const resultUser = User.getByLoginAndPassword({
         login,
-        password: passwordHash,
+        password: passwordHash
       })
       if (!resultUser.success) {
         throw new Error(resultUser.message)
@@ -55,7 +56,7 @@ const userService = (dbHandlers) => {
       if (!resultUser.payload) return null
 
       const userInfo = {
-        uuid: resultUser.payload.uuid,
+        uuid: resultUser.payload.uuid
       }
       return userInfo
     },
@@ -75,11 +76,14 @@ const userService = (dbHandlers) => {
       const usersDto = result.payload.map((u) => ({
         id: u.id,
         login: u.login,
-        isOnline: u.isOnline ? true : false,
-        lastOnlineTime: u.lastOnlineTime,
+        isOnline: !!u.isOnline,
+        lastOnlineTime: u.lastOnlineTime
       }))
       return usersDto
     },
+    connect: (uuid) => {
+      bus.emit(userConnectedBusEvent, { uuid })
+    }
   }
 }
 

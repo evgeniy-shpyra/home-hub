@@ -1,12 +1,16 @@
 {
   "mainServer": {
     "port": 8000,
-    "host": "localhost",
+    "host": "192.168.31.211",
     "token": "20437631-e61b-4cf5-a494-31bec89963d6"
   },
   "server": {
     "port": 9000,
     "host": "0.0.0.0",
     "cookieSecret": "my-secret"
+  },
+  "mqtt": {
+    "host": "localhost",
+    "port": "1883"
   }
 }

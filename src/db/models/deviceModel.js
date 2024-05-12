@@ -34,7 +34,7 @@ const deviceModel = (db) => {
         return result
       })
     },
-    getById: () => {
+    getById: (id) => {
       return queryWrapper(() => {
         const query = `SELECT * FROM ${deviceTableName} WHERE id = ?;`
         const result = db.prepare(query).get(id)
@@ -104,7 +104,7 @@ const deviceModel = (db) => {
         const query = `SELECT device.id as deviceId, device.name as deviceName,
                               actionDevice.deviceStatus, actionDevice.priority, 
                               action.id as actionId, action.name as actionName,
-                              sensor.name as sensorName, sensor.id as sensorId
+                              sensor.name as sensorName, sensor.id as sensorId, sensor.status as sensorStatus
                        FROM ${deviceTableName} as device
                        INNER JOIN ${deviceActionTableName} as actionDevice
                        ON device.id = actionDevice.deviceId
@@ -116,7 +116,7 @@ const deviceModel = (db) => {
         const result = db.prepare(query).all(deviceId)
         return result
       })
-    },
+    }
   }
 }
 

@@ -19,7 +19,7 @@ const actionService = (dbHandlers) => {
       if (!result.success) {
         throw new Error(result.error)
       }
-      return result.payload == 1 ? true : false
+      return result.payload == 1
     },
     getActive: () => {
       const result = Action.selectActive()
@@ -35,7 +35,7 @@ const actionService = (dbHandlers) => {
       }
       console.log(result)
       return result.payload
-    },
+    }
   }
 }
 

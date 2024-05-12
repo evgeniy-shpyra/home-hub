@@ -1,7 +1,6 @@
 import Database from 'better-sqlite3'
 import deviceModel from './models/deviceModel.js'
 import actionModel from './models/actionModel.js'
-import setupDb from './setupDb.js'
 import userModel from './models/userModel.js'
 import sensorModel from './models/sensorsModel.js'
 import deviceActionModel from './models/deviceActionModel.js'
@@ -22,9 +21,10 @@ const initDb = () => {
   return {
     close: () => {
       db.close()
+      console.log('Db has been stopped')
     },
-    models,
-  } 
+    models
+  }
 }
 
 export default initDb

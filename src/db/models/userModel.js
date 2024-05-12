@@ -55,10 +55,10 @@ const userModel = (db) => {
       return queryWrapper(() => {
         const query = `DELETE FROM ${tableName} WHERE id = ?`
         const result = db.prepare(query).run(id)
-        const isDeleted = result.changes === 1 
+        const isDeleted = result.changes === 1
         return isDeleted
       })
-    },
+    }
   }
 }
 

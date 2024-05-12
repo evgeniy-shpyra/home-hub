@@ -11,21 +11,20 @@ const deviceActionModel = (db) => {
       actionId VARCHAR(40),
       deviceId INTEGER,
       priority INTEGER NOT NULL,
-      deviceStatus BOOLEAN NOT NULL,
       FOREIGN KEY (actionId) REFERENCES ${actionTableName}(id) ON DELETE CASCADE,
       FOREIGN KEY (deviceId) REFERENCES ${deviceTableName}(id) ON DELETE CASCADE,
       CONSTRAINT unique_action_device UNIQUE (actionId, deviceId)
     )
   `)
- 
+
   return {
-    create: function ({ actionId, deviceId, priority, deviceStatus }) {
+    create: function ({ actionId, deviceId, priority }) {
       return queryWrapper(() => {
         const createQuery = db.prepare(
-          `INSERT INTO ${deviceActionTableName} (actionId, deviceId, deviceStatus, priority) VALUES (?, ?, ?, ?);`
+          `INSERT INTO ${deviceActionTableName} (actionId, deviceId, priority) VALUES (?, ?, ?, ?);`
         )
         db.transaction(() => {
-          createQuery.run(actionId, deviceId, deviceStatus, priority )
+          createQuery.run(actionId, deviceId, priority)
         })()
       })
     },
@@ -43,7 +42,7 @@ const deviceActionModel = (db) => {
         const isDeleted = result.changes === 1
         return isDeleted
       })
-    },
+    }
   }
 }
 

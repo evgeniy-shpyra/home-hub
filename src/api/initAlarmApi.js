@@ -1,6 +1,5 @@
 import WebSocket from 'ws'
-import wait from '../utils/wait.js'
-import { scheduler } from 'node:timers/promises'
+import { setTimeout as sleep } from 'node:timers/promises'
 
 const initAlarmApi = (opt = {}) => {
   const host = opt.host
@@ -15,7 +14,7 @@ const initAlarmApi = (opt = {}) => {
   }
 
   const headers = {
-    Authorization: `Bearer ${token}`,
+    Authorization: `Bearer ${token}`
   }
 
   const subscriptions = {}
@@ -23,7 +22,7 @@ const initAlarmApi = (opt = {}) => {
   const tryToConnect = (route) => {
     return new Promise((res, rej) => {
       const ws = new WebSocket(`ws://${host}:${port}/${route}`, {
-        headers,
+        headers
       })
 
       if (!subscriptions[route]) {
@@ -35,13 +34,14 @@ const initAlarmApi = (opt = {}) => {
       ws.on('error', (error) => {
         rej(error)
       })
-      ws.on('open', function open() {
+      ws.on('open', function open () {
         res(ws)
         console.log('Open connection')
       })
     })
   }
 
+  let isRunning = true
   return {
     subscribe: async function (route, onMessage) {
       const context = this
@@ -49,18 +49,18 @@ const initAlarmApi = (opt = {}) => {
       let ws = null
       let isConnected = false
       while (!isConnected) {
+        if (!isRunning) return
         try {
           ws = await tryToConnect(route)
           isConnected = true
           if (!ws) throw new Error('Connection error')
         } catch (e) {
-          // console.log(e)
           console.error('Connection to alarm api error')
-          await scheduler.wait(tryToConnectInterval)
+          await sleep(tryToConnectInterval)
         }
       }
 
-      ws.on('close', function close() {
+      ws.on('close', function close () {
         console.log('Disconnected from alarm api')
         setTimeout(
           context.subscribe.bind(context, route, onMessage),
@@ -68,7 +68,7 @@ const initAlarmApi = (opt = {}) => {
         )
       })
 
-      ws.on('message', function incoming(data) {
+      ws.on('message', function incoming (data) {
         onMessage && onMessage(JSON.parse(data.toString()))
       })
     },
@@ -81,6 +81,14 @@ const initAlarmApi = (opt = {}) => {
         subscriptions[route] && (await subscriptions[route].close())
       }
     },
+    stop: () => {
+      for (const route in subscriptions) {
+        subscriptions[route].close()
+      }
+      isRunning = false
+
+      console.log('Alarm api has been stopped')
+    }
   }
 }
 

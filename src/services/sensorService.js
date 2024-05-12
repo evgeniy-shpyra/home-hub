@@ -1,9 +1,9 @@
-import { actionBusEvent, sensorConDiscBusEvent } from '../bus/busEvents.js'
+import { actionBusEvent } from '../bus/busEvents.js'
 import { createHash } from '../utils/hash.js'
 
 const sensorService = (dbHandlers, bus) => {
   const { Sensor } = dbHandlers
-  
+
   return {
     create: ({ name, password, action_id }) => {
       const passwordHash = createHash(password)
@@ -21,10 +21,9 @@ const sensorService = (dbHandlers, bus) => {
       const sensorDto = result.payload.map((s) => ({
         id: s.id,
         name: s.name,
-        isOnline: s.isOnline ? true : false,
         action_id: s.action_id,
-        status: s.status ? true : false,
-        connectedAt: s.connectedAt,
+        status: !!s.status,
+        connectedAt: s.connectedAt
       }))
 
       return sensorDto
@@ -37,15 +36,6 @@ const sensorService = (dbHandlers, bus) => {
       const sensor = result.payload
       return sensor
     },
-    isVerified: ({ name, password }) => {
-      const passwordHash = createHash(password)
-      const result = Sensor.getByNameAndPassword({ name, password: passwordHash })
-      if (!result.success) {
-        throw new Error(result.error)
-      }
-      const sensor = result.payload
-      return sensor ? true : false
-    },
     getByName: (name) => {
       const result = Sensor.getByName(name)
       if (!result.success) {
@@ -53,26 +43,6 @@ const sensorService = (dbHandlers, bus) => {
       }
       const sensor = result.payload
       return sensor
-    },
-    setOnline: (id) => {
-      const result = Sensor.setOnline({ isOnline: 1, id })
-      if (!result.success) {
-        throw new Error(result.error)
-      }
-      bus.emit(sensorConDiscBusEvent, {
-        id,
-        isOnline: true,
-      })
-    },
-    setOffline: (id) => {
-      const result = Sensor.setOnline({ isOnline: 0, id })
-      if (!result.success) {
-        throw new Error(result.error)
-      }
-      bus.emit(sensorConDiscBusEvent, {
-        id,
-        isOnline: false,
-      })
     },
     delete: (id) => {
       const result = Sensor.deleteById(id)
@@ -87,8 +57,8 @@ const sensorService = (dbHandlers, bus) => {
       if (!result.success) {
         throw new Error(result.message)
       }
-      bus.emit(actionBusEvent, {id, status})
-    },
+      bus.emit(actionBusEvent, { id, status })
+    }
   }
 }
 

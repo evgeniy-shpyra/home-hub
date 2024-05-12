@@ -15,11 +15,11 @@ const sensorController = (services) => {
       if (!isDeleted) {
         return {
           code: 400,
-          payload: { error: `Can't delete sensor with id ${id}` },
+          payload: { error: `Can't delete sensor with id ${id}` }
         }
       }
       return { code: 204 }
-    },
+    }
   }
 }
 

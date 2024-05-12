@@ -1,5 +1,10 @@
+// change status of sensor | sensor -> hub
 export const actionBusEvent = 'action'
-export const deviceConDiscBusEvent = 'deviceConDisc'
-export const onChangeDeviceStatusBusEvent = 'onChangeDeviceStatus'
+
+// change status hub -> device
+export const deviceStatusSetBusEvent = 'deviceStatusSet'
+export const deviceStatusGetBusEvent = 'deviceStatusGet'
+
 export const changeDeviceStatusBusEvent = 'changeDeviceStatus'
-export const sensorConDiscBusEvent = 'sensorConDisc'
+
+export const userConnectedBusEvent = 'userConnected'

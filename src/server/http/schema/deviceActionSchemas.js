@@ -11,18 +11,18 @@ export const createDeviceActionSchema = schemaWrapper({
       deviceId: { type: 'number' },
       actionId: { type: 'number' },
       priority: { type: 'number' },
-      deviceStatus: { type: 'boolean' },
+      deviceStatus: { type: 'boolean' }
     },
     required: ['deviceId', 'actionId', 'priority'],
-    additionalProperties: false,
-  },
+    additionalProperties: false
+  }
 })
 
 export const getDevicesActionsSchema = schemaWrapper({
   tags,
   description: 'Get connected the devices with the actions',
   successResponse: {
-    [200]: {
+    200: {
       description: 'Successful response with no body',
       type: 'array',
       items: {
@@ -30,11 +30,9 @@ export const getDevicesActionsSchema = schemaWrapper({
         properties: {
           deviceId: { type: 'number' },
           actionId: { type: 'number' },
-          deviceStatus: { type: 'boolean' },
-          actionId: { type: 'number' },
-        },
-      },
-    },
-  },
+          deviceStatus: { type: 'boolean' }
+        }
+      }
+    }
+  }
 })
-
