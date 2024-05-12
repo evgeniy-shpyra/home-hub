@@ -8,10 +8,9 @@ export const createDeviceSchema = schemaWrapper({
   body: {
     type: 'object',
     properties: {
-      name: { type: 'string' },
-      password: { type: 'string' }
+      name: { type: 'string' }
     },
-    required: ['name', 'password'],
+    required: ['name'],
     additionalProperties: false
   }
 })

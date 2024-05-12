@@ -10,20 +10,19 @@ const deviceModel = (db) => {
     CREATE TABLE IF NOT EXISTS ${deviceTableName} (
       id INTEGER PRIMARY KEY,
       name TEXT UNIQUE NOT NULL,
-      password VARCHAR(64) NOT NULL,
       isOnline BOOLEAN NOT NULL,
       connectedAt DATETIME
     )  
   `)
 
   return {
-    create: function ({ name, password }) {
+    create: function ({ name }) {
       return queryWrapper(() => {
         const createQuery = db.prepare(
-          `INSERT INTO ${deviceTableName} (name, password, isOnline ) VALUES (?, ?, 0);`
+          `INSERT INTO ${deviceTableName} (name, isOnline ) VALUES (?, ?, 0);`
         )
         db.transaction(() => {
-          createQuery.run(name, password)
+          createQuery.run(name)
         })()
       })
     },
@@ -38,13 +37,6 @@ const deviceModel = (db) => {
       return queryWrapper(() => {
         const query = `SELECT * FROM ${deviceTableName} WHERE id = ?;`
         const result = db.prepare(query).get(id)
-        return result
-      })
-    },
-    getByNameAndPassword: ({ name, password }) => {
-      return queryWrapper(() => {
-        const query = `SELECT * FROM ${deviceTableName} WHERE name = ? AND password = ?;`
-        const result = db.prepare(query).get(name, password)
         return result
       })
     },

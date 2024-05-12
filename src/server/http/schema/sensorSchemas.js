@@ -9,10 +9,9 @@ export const createSensorSchema = schemaWrapper({
     type: 'object',
     properties: {
       name: { type: 'string' },
-      password: { type: 'string' },
       action_id: { type: 'number' }
     },
-    required: ['name', 'password', 'action_id'],
+    required: ['name', 'action_id'],
     additionalProperties: false
   }
 })

@@ -8,7 +8,6 @@ const sensorModel = (db) => {
     CREATE TABLE IF NOT EXISTS ${tableName} (
       id INTEGER PRIMARY KEY,
       name TEXT UNIQUE NOT NULL,
-      password VARCHAR(64) NOT NULL,
       action_id NUMBER NOT NULL,
       status BOOLEAN NOT NULL,
       connectedAt DATETIME,
@@ -17,13 +16,13 @@ const sensorModel = (db) => {
   `)
 
   return {
-    create: ({ name, password, action_id }) => {
+    create: ({ name, action_id }) => {
       return queryWrapper(() => {
         const createQuery = db.prepare(
-          `INSERT INTO ${tableName} (name, password, action_id, status) VALUES (?, ?, ?, 0);`
+          `INSERT INTO ${tableName} (name, action_id, status) VALUES (?, ?, ?, 0);`
         )
         db.transaction(() => {
-          createQuery.run(name, password, action_id)
+          createQuery.run(name, action_id)
         })()
       })
     },
@@ -39,20 +38,6 @@ const sensorModel = (db) => {
         const query = `SELECT * FROM ${tableName} WHERE id = ?;`
         const data = db.prepare(query).get(id)
         return data
-      })
-    },
-    getByIdAndPassword: ({ id, password }) => {
-      return queryWrapper(() => {
-        const query = `SELECT * FROM ${tableName} WHERE id = ? AND password = ?;`
-        const data = db.prepare(query).get(id, password)
-        return data
-      })
-    },
-    getByNameAndPassword: ({ name, password }) => {
-      return queryWrapper(() => {
-        const query = `SELECT * FROM ${tableName} WHERE name = ? AND password = ?;`
-        const result = db.prepare(query).get(name, password)
-        return result
       })
     },
     getByName: (name) => {

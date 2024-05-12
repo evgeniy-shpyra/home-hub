@@ -61,10 +61,9 @@ const deviceService = (dbHandlers, bus) => {
         status
       })
     },
-    create: ({ name, password }) => {
+    create: ({ name }) => {
       const deviceData = {
         name,
-        password: createHash(password)
       }
       const result = Device.create(deviceData)
       if (!result.success) {

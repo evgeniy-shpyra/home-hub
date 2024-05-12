@@ -6,8 +6,8 @@ const infoController = (services) => {
       const payload = deviceService.getAll()
       return { code: 200, payload }
     },
-    create: ({ name, password }) => {
-      deviceService.create({ name, password })
+    create: ({ name }) => {
+      deviceService.create({ name })
 
       return { code: 200 }
     },
