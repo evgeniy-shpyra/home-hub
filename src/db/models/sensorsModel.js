@@ -10,7 +10,7 @@ const sensorModel = (db) => {
       name TEXT UNIQUE NOT NULL,
       action_id NUMBER NOT NULL,
       status BOOLEAN NOT NULL,
-      connectedAt DATETIME,
+      lastActionAt DATETIME,
       FOREIGN KEY (action_id) REFERENCES ${actionTableName}(id) ON DELETE CASCADE
     )  
   `)
@@ -19,7 +19,7 @@ const sensorModel = (db) => {
     create: ({ name, action_id }) => {
       return queryWrapper(() => {
         const createQuery = db.prepare(
-          `INSERT INTO ${tableName} (name, action_id, status) VALUES (?, ?, ?, 0);`
+          `INSERT INTO ${tableName} (name, action_id, status) VALUES (?, ?, 0);`
         )
         db.transaction(() => {
           createQuery.run(name, action_id)

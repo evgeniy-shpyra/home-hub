@@ -10,8 +10,7 @@ const deviceModel = (db) => {
     CREATE TABLE IF NOT EXISTS ${deviceTableName} (
       id INTEGER PRIMARY KEY,
       name TEXT UNIQUE NOT NULL,
-      isOnline BOOLEAN NOT NULL,
-      connectedAt DATETIME
+      lastActionAt DATETIME
     )  
   `)
 
@@ -19,7 +18,7 @@ const deviceModel = (db) => {
     create: function ({ name }) {
       return queryWrapper(() => {
         const createQuery = db.prepare(
-          `INSERT INTO ${deviceTableName} (name, isOnline ) VALUES (?, ?, 0);`
+          `INSERT INTO ${deviceTableName} (name) VALUES (?);`
         )
         db.transaction(() => {
           createQuery.run(name)
@@ -45,17 +44,6 @@ const deviceModel = (db) => {
         const query = `SELECT * FROM ${deviceTableName} WHERE name = ?;`
         const result = db.prepare(query).get(name)
         return result
-      })
-    },
-
-    setOnline: ({ isOnline, id }) => {
-      return queryWrapper(() => {
-        const query = db.prepare(
-          `UPDATE ${deviceTableName} SET isOnline = ?, connectedAt = ? WHERE id = ?;`
-        )
-        db.transaction(() => {
-          query.run(isOnline, new Date().toISOString(), id)
-        })()
       })
     },
     deleteAll: () => {
