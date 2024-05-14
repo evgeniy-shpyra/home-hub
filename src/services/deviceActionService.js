@@ -13,15 +13,35 @@ const deviceActionService = (dbHandlers, bus) => {
         throw new Error(result.error)
       }
     },
-    bulkCreate: (devisesActions) => {
-      const items = []
+    bultUpdateCreate: function (devisesActions) {
+      const itemsForCreating = []
       for (const key in devisesActions) {
-        items.push({
-          ...devisesActions[key],
-          deviceStatus: devisesActions[key].deviceStatus ? 1 : 0,
-        })
+        const item =  {...devisesActions[key], deviceStatus: devisesActions[key].deviceStatus ? 1 : 0}
+        if(item.id){
+          this.update(item)
+        }
+        else{
+          itemsForCreating.push(item)
+        }
       }
-      const result = DeviceAction.bulkCreate(items)
+
+      if(itemsForCreating.length)
+        this.bulkCreate(itemsForCreating)
+    },
+    bulkCreate: (devisesActions) => {
+      const result = DeviceAction.bulkCreate(devisesActions)
+      if (!result.success) {
+        throw new Error(result.error)
+      }
+    },
+    update: (deviseAction) => {
+      const result = DeviceAction.update(deviseAction)
+      if (!result.success) {
+        throw new Error(result.error)
+      }
+    },
+    bulkCreate: (devisesActions) => {
+      const result = DeviceAction.bulkCreate(devisesActions)
       if (!result.success) {
         throw new Error(result.error)
       }

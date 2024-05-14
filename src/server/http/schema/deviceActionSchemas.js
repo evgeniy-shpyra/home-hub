@@ -18,7 +18,7 @@ export const createDeviceActionSchema = schemaWrapper({
   },
 })
 
-export const bulkCreateDeviceActionSchema = schemaWrapper({
+export const bulkUpdateCreateDeviceActionSchema = schemaWrapper({
   tags,
   description: 'Bulk connect the device and the action',
   body: {
@@ -26,6 +26,7 @@ export const bulkCreateDeviceActionSchema = schemaWrapper({
     items: {
       type: 'object',
       properties: {
+        id: { type: 'number' },
         deviceId: { type: 'number' },
         actionId: { type: 'number' },
         priority: { type: 'number' },

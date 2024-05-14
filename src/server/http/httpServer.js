@@ -1,7 +1,7 @@
 import parseCookies from '../../utils/parseCookies.js'
 import { createActionSchema, getActionsSchema } from './schema/actionSchemas.js'
 import {
-  bulkCreateDeviceActionSchema,
+  bulkUpdateCreateDeviceActionSchema,
   createDeviceActionSchema,
   getDevicesActionsSchema,
 } from './schema/deviceActionSchemas.js'
@@ -54,11 +54,6 @@ const initHttp = async (server, controllers, services) => {
         schema: createDeviceActionSchema,
         isAuth: true,
       },
-      'devices-actions': {
-        handler: controllers.deviceAction.bulkCreate,
-        schema: bulkCreateDeviceActionSchema,
-        isAuth: true,
-      },
       'user': {
         handler: controllers.user.create,
         schema: createUserSchema,
@@ -72,6 +67,13 @@ const initHttp = async (server, controllers, services) => {
       'system/toggle': {
         handler: controllers.system.toggle,
         schema: toggleSystemSchema,
+        isAuth: true,
+      },
+    },
+    put: {
+      'devices-actions': {
+        handler: controllers.deviceAction.bulkUpdateCreate,
+        schema: bulkUpdateCreateDeviceActionSchema,
         isAuth: true,
       },
     },
