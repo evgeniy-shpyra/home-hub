@@ -20,8 +20,9 @@ const deviceActionService = (dbHandlers, bus) => {
           ...devisesActions[key],
           deviceStatus: devisesActions[key].deviceStatus ? 1 : 0,
         }
+
         if (item.id) {
-          if (item.deviceStatus === null) {
+          if (devisesActions[key].isDelete) {
             this.deleteById(item.id)
           } else {
             this.update(item)

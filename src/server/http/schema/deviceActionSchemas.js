@@ -31,6 +31,7 @@ export const bulkUpdateDeviceActionSchema = schemaWrapper({
         actionId: { type: 'number' },
         priority: { type: 'number' },
         deviceStatus: { type: 'boolean' },
+        isDelete: { type: 'boolean' },
       },
       required: ['deviceId', 'actionId', 'priority', 'deviceStatus'],
       additionalProperties: false,
