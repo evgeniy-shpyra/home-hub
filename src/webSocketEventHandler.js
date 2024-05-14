@@ -10,7 +10,6 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
   const deviceMqttHandler = mqttHandlers.device
   const pingMqttHandler = mqttHandlers.ping
   const userWsHandler = wsHandlers.user
-  const deviceService = services.device
 
   // changed status of sensor
   bus.on(actionBusEvent, (data) => {
@@ -19,7 +18,7 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
 
     for (const device of devices) {
       const foundDeviceForWriting = devicesForWriting.find(
-        (d) => d.id === device.deviceId
+        (d) => d.deviceId === device.deviceId
       )
       if (
         foundDeviceForWriting &&
@@ -35,11 +34,11 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
 
     for (const device of devicesForWriting) {
       const payloadForDevice = {
-        deviceStatus: device.deviceStatus,
+        deviceStatus: device.deviceStatus ? true : false,
         sensorStatus: device.sensorStatus,
         isAction: true
       }
-
+     
       deviceMqttHandler.setStatus(payloadForDevice, device.deviceName)
     }
 
@@ -72,7 +71,7 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
 
     deviceMqttHandler.setStatus(
       {
-        deviceStatus: deviceMaxPriority.deviceStatus,
+        deviceStatus: deviceMaxPriority.deviceStatus ? true : false,
         sensorStatus: deviceMaxPriority.sensorStatus,
         isAction: true
       },
