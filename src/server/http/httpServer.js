@@ -1,5 +1,5 @@
 import parseCookies from '../../utils/parseCookies.js'
-import { createActionSchema, getActionsSchema } from './schema/actionSchemas.js'
+import { createActionSchema, deleteActionSchema, getActionsSchema } from './schema/actionSchemas.js'
 import {
   bulkUpdateDeviceActionSchema,
   createDeviceActionSchema,
@@ -128,6 +128,11 @@ const initHttp = async (server, controllers, services) => {
       'device/:id': {
         handler: controllers.device.delete,
         schema: deleteDeviceSchema,
+        isAuth: true,
+      },
+      'action/:id': {
+        handler: controllers.action.delete,
+        schema: deleteActionSchema,
         isAuth: true,
       },
     },

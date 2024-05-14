@@ -43,7 +43,15 @@ const actionModel = (db) => {
           createQuery.run()
         })()
       })
-    }
+    },
+    deleteById: (id) => {
+      return queryWrapper(() => {
+        const query = `DELETE FROM ${tableName} WHERE id = ?`
+        const result = db.prepare(query).run(id)
+        const isDeleted = result.changes === 1
+        return isDeleted
+      })
+    },
   }
 }
 

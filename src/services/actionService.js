@@ -34,6 +34,14 @@ const actionService = (dbHandlers) => {
         throw new Error(result.error)
       }
       return result.payload
+    },
+    delete: (id) => {
+      const result = Action.deleteById(id)
+      if (!result.success) {
+        throw new Error(result.message)
+      }
+      const isDeleted = result.payload
+      return isDeleted
     }
   }
 }

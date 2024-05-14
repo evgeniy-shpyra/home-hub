@@ -33,3 +33,15 @@ export const getActionsSchema = schemaWrapper({
     }
   }
 })
+
+
+export const deleteActionSchema = schemaWrapper({
+  tags,
+  description: 'Delete a action',
+  successResponse: {
+    204: {
+      description: 'Successful response with no body',
+      type: 'null'
+    }
+  }
+})

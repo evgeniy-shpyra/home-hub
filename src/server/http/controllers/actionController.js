@@ -10,6 +10,16 @@ const actionController = (services) => {
     getAll: () => {
       const payload = actionService.getAll()
       return { code: 200, payload }
+    },
+    delete: ({ id }) => {
+      const isDeleted = actionService.delete(id)
+      if (!isDeleted) {
+        return {
+          code: 400,
+          payload: { error: `Can't delete action with id ${id}` }
+        }
+      }
+      return { code: 204 }
     }
   }
 }
