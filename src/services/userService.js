@@ -1,6 +1,5 @@
 import crypto from 'node:crypto'
 import { createHash } from '../utils/hash.js'
-import { pingSystemBusEvent } from '../bus/busEvents.js'
 
 const userService = (dbHandlers, bus) => {
   const { User } = dbHandlers
@@ -82,7 +81,6 @@ const userService = (dbHandlers, bus) => {
       return usersDto
     },
     connect: (uuid) => {
-      bus.emit(pingSystemBusEvent, { uuid })
     }
   }
 }

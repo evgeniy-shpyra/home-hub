@@ -14,7 +14,6 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
 
   // changed status of sensor
   bus.on(actionBusEvent, (data) => {
-    console.log('actionBusEvent', data)
     const devices = services.device.getDevicesByActiveActions()
     const devicesForWriting = []
 
@@ -35,7 +34,6 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
     }
 
     for (const device of devicesForWriting) {
-      console.log(device)
       const payloadForDevice = {
         deviceStatus: device.deviceStatus,
         sensorStatus: device.sensorStatus,
@@ -54,8 +52,6 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
 
   // connect device
   bus.on(deviceStatusGetBusEvent, (device) => {
-    console.log('deviceStatusGetBusEvent', device)
-
     const deviceByAction = services.device.getDevicesByActiveActionsById(
       device.id
     )
@@ -91,8 +87,7 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
 
   // on changed status of device
   bus.on(deviceStatusSetBusEvent, (data) => {
-    console.log('deviceStatusSetBusEvent', data)
-
+   
     const payloadForUser = {
       action: 'deviceStatus',
       payload: data

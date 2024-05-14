@@ -33,7 +33,6 @@ const actionService = (dbHandlers) => {
       if (!result.success) {
         throw new Error(result.error)
       }
-      console.log(result)
       return result.payload
     }
   }
