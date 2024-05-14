@@ -2,7 +2,7 @@ import {
   actionBusEvent,
   deviceStatusSetBusEvent,
   changeDeviceStatusBusEvent,
-  userConnectedBusEvent,
+  pingSystemBusEvent,
   deviceStatusGetBusEvent
 } from './bus/busEvents.js'
 
@@ -56,7 +56,9 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
   bus.on(deviceStatusGetBusEvent, (device) => {
     console.log('deviceStatusGetBusEvent', device)
 
-    const deviceByAction = services.device.getDevicesByActiveActionsById(device.id)
+    const deviceByAction = services.device.getDevicesByActiveActionsById(
+      device.id
+    )
 
     if (!deviceByAction.length) return
 
@@ -100,7 +102,7 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
   })
 
   // user connected
-  bus.on(userConnectedBusEvent, () => {
+  bus.on(pingSystemBusEvent, () => {
     pingMqttHandler()
   })
 

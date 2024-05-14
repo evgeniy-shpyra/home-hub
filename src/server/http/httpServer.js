@@ -15,7 +15,7 @@ import {
   deleteSensorSchema,
   getSensorsSchema
 } from './schema/sensorSchemas.js'
-import { toggleSystemSchema } from './schema/systemSchemas.js'
+import { pingSystemSchema, toggleSystemSchema } from './schema/systemSchemas.js'
 
 import {
   createUserSchema,
@@ -63,9 +63,14 @@ const initHttp = async (server, controllers, services) => {
         schema: loginUserSchema,
         isAuth: false
       },
-      'toggle-system': {
+      'system/toggle': {
         handler: controllers.system.toggle,
         schema: toggleSystemSchema,
+        isAuth: true
+      },
+      'system/ping': {
+        handler: controllers.system.ping,
+        schema: pingSystemSchema,
         isAuth: true
       }
     },

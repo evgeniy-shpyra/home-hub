@@ -63,7 +63,7 @@ const deviceService = (dbHandlers, bus) => {
     },
     create: ({ name }) => {
       const deviceData = {
-        name,
+        name
       }
       const result = Device.create(deviceData)
       if (!result.success) {

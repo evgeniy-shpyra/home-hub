@@ -1,6 +1,11 @@
 const systemController = (services) => {
+  const systemService = services.system
   return {
-    toggleSystem: () => {}
+    toggleSystem: () => {},
+    ping: () => {
+      systemService.ping()
+      return { code: 200 }
+    }
   }
 }
 

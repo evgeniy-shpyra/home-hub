@@ -14,3 +14,7 @@ export const toggleSystemSchema = schemaWrapper({
     additionalProperties: false
   }
 })
+export const pingSystemSchema = schemaWrapper({
+  tags,
+  description: 'Ping the system'
+})
