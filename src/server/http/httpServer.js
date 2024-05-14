@@ -99,7 +99,7 @@ const initHttp = async (server, controllers, services) => {
         handler: controllers.sensor.getAll,
         schema: getSensorsSchema,
         isAuth: true
-      }
+      },
       'system/ping': {
         handler: controllers.system.ping,
         schema: pingSystemSchema,
