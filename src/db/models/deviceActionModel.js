@@ -29,6 +29,27 @@ const deviceActionModel = (db) => {
         })()
       })
     },
+    bulkCreate: function (actionsDevices) {
+      return queryWrapper(() => {
+        let valuesString = []
+        let values = []
+        for (const ad of actionsDevices) {
+          valuesString.push('(?, ?, ?, ?)')
+
+          values.push(ad.actionId)
+          values.push(ad.deviceId)
+          values.push(ad.priority)
+          values.push(ad.deviceStatus)
+        }
+        valuesString = valuesString.join(',')
+        const createQuery = db.prepare(
+          `INSERT INTO ${deviceActionTableName} (actionId, deviceId, priority, deviceStatus) VALUES ${valuesString};`
+        )
+        db.transaction(() => {
+          createQuery.run(...values)
+        })()
+      })
+    },
     select: () => {
       return queryWrapper(() => {
         const query = `SELECT * FROM ${deviceActionTableName};`
@@ -38,12 +59,19 @@ const deviceActionModel = (db) => {
     },
     deleteById: (id) => {
       return queryWrapper(() => {
-        const query = `DELETE FROM ${tableName} WHERE id = ?`
+        const query = `DELETE FROM ${deviceActionTableName} WHERE id = ?`
         const result = db.prepare(query).run(id)
         const isDeleted = result.changes === 1
         return isDeleted
       })
-    }
+    },
+    deleteAll: () => {
+      return queryWrapper(() => {
+        const query = `DELETE FROM ${deviceActionTableName};`
+        const result = db.prepare(query).run()
+        return true
+      })
+    },
   }
 }
 

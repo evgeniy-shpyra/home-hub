@@ -9,6 +9,15 @@ const deviceActionController = (services) => {
     create: ({ actionId, deviceId, priority, deviceStatus }) => {
       deviceActionService.create({ actionId, deviceId, priority, deviceStatus })
       return { code: 200 }
+    },
+    bulkCreate: (devicesActions) => {
+      deviceActionService.deleteAll()
+      deviceActionService.bulkCreate(devicesActions)
+      return { code: 200 }
+    },
+    deleteAndBulkCreate: (deviceActions) => {
+      deviceActionService.create({ actionId, deviceId, priority, deviceStatus })
+      return { code: 200 }
     }
   }
 }
