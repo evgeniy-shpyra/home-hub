@@ -10,8 +10,8 @@ const deviceActionController = (services) => {
       deviceActionService.create({ actionId, deviceId, priority, deviceStatus })
       return { code: 200 }
     },
-    bulkUpdateCreate: (devicesActions) => {
-      deviceActionService.bultUpdateCreate(devicesActions)
+    bulkUpdate: (devicesActions) => {
+      deviceActionService.bulkUpdate(devicesActions)
       return { code: 200 }
     },
   }

@@ -18,7 +18,7 @@ export const createDeviceActionSchema = schemaWrapper({
   },
 })
 
-export const bulkUpdateCreateDeviceActionSchema = schemaWrapper({
+export const bulkUpdateDeviceActionSchema = schemaWrapper({
   tags,
   description: 'Bulk connect the device and the action',
   body: {
