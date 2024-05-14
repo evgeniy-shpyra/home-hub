@@ -72,6 +72,14 @@ const deviceActionModel = (db) => {
         return true
       })
     },
+    deleteByActionId: (actionId) => {
+      return queryWrapper(() => {
+        const query = `DELETE FROM ${deviceActionTableName} WHERE actionId = ?;`
+        const result = db.prepare(query).run(actionId)
+        const isDeleted = result.changes === 1
+        return isDeleted
+      })
+    },
   }
 }
 

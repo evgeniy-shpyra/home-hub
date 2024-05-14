@@ -11,7 +11,8 @@ const deviceActionController = (services) => {
       return { code: 200 }
     },
     bulkCreate: (devicesActions) => {
-      deviceActionService.deleteAll()
+      const actionId = devicesActions[0].actionId
+      deviceActionService.deleteByActionId(actionId)
       deviceActionService.bulkCreate(devicesActions)
       return { code: 200 }
     },
