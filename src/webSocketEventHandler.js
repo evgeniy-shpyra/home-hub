@@ -46,7 +46,7 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
     }
 
     const payloadForUser = {
-      action: 'changeSensorStatus',
+      action: 'sensorStatus',
       payload: data
     }
     userWsHandler(payloadForUser)
