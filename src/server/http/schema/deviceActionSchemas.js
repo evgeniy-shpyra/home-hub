@@ -48,9 +48,11 @@ export const getDevicesActionsSchema = schemaWrapper({
       items: {
         type: 'object',
         properties: {
+          id: { type: 'number' },
           deviceId: { type: 'number' },
           actionId: { type: 'number' },
-          deviceStatus: { type: 'boolean' },
+          priority: { type: 'number' },
+          deviceStatus: { type: 'boolean' }
         },
       },
     },
