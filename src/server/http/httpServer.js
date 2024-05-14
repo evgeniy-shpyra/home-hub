@@ -68,11 +68,6 @@ const initHttp = async (server, controllers, services) => {
         schema: toggleSystemSchema,
         isAuth: true
       },
-      'system/ping': {
-        handler: controllers.system.ping,
-        schema: pingSystemSchema,
-        isAuth: true
-      }
     },
     get: {
       devices: {
@@ -103,6 +98,11 @@ const initHttp = async (server, controllers, services) => {
       sensors: {
         handler: controllers.sensor.getAll,
         schema: getSensorsSchema,
+        isAuth: true
+      }
+      'system/ping': {
+        handler: controllers.system.ping,
+        schema: pingSystemSchema,
         isAuth: true
       }
     },
