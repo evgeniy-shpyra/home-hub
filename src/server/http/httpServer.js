@@ -1,5 +1,8 @@
-import parseCookies from '../../utils/parseCookies.js'
-import { createActionSchema, deleteActionSchema, getActionsSchema } from './schema/actionSchemas.js'
+import {
+  createActionSchema,
+  deleteActionSchema,
+  getActionsSchema,
+} from './schema/actionSchemas.js'
 import {
   bulkUpdateDeviceActionSchema,
   createDeviceActionSchema,
@@ -61,7 +64,7 @@ const initHttp = async (server, controllers, services) => {
       },
       'login': {
         handler: controllers.user.login,
-        // schema: loginUserSchema,
+        schema: loginUserSchema,
         isAuth: false,
       },
       'system/toggle': {
@@ -138,44 +141,27 @@ const initHttp = async (server, controllers, services) => {
     },
   }
 
-  const verifyAuth = (cookies) => {
+  const verifyAuth = (authorization) => {
     const userService = services.user
-    const isAuth = userService.isAuth(cookies.id)
+    const isAuth = userService.isAuth(authorization)
     return isAuth
   }
 
   const mainHandler = async (req, reply, opt) => {
     const { handler, isRequiredAuth } = opt
     try {
-      const cookies = parseCookies(req.cookies, req.unsignCookie)
-      console.log(req.cookies)
-      const userData = verifyAuth(cookies)
+      const userData = verifyAuth(handler.authorization)
 
       if (isRequiredAuth && !userData.isAuth) {
-        reply
-          .clearCookie('id')
-          .code(401)
-          .send({ error: ['Not authorized'] })
+        reply.code(401).send({ error: ['Not authorized'] })
         return
       }
-
       const user = userData.user
 
       const body = req.body || {}
       const params = req.params || {}
 
       const response = await handler({ ...body, ...params }, user)
-      if (response && response.user) {
-        reply.setCookie('id', response.user.uuid, {
-          // signed: true, 
-          path: "/"
-        })
-      } else if (user) {
-        reply.setCookie('id', user.uuid, {
-          // signed: true,
-          path: "/"
-        })
-      }
 
       reply.code(response.code).send(response.payload)
     } catch (e) {

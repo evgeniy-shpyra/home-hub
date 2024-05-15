@@ -4,7 +4,7 @@ const userController = (services) => {
     get: (_, user) => {
       const payload = {}
       if (user) {
-        payload.id = user.uuid
+        payload.token = user.uuid
         payload.login = user.login
       }
       return { code: 200, payload }
@@ -23,22 +23,18 @@ const userController = (services) => {
       if (!userData) {
         return { code: 401, payload: { error: 'Not authorized' } }
       }
-      const response = { code: 200, payload: userData }
-      if (Object.keys(userData).length) {
-        response.user = { uuid: userData.uuid }
-      }
-      return response
+      return { code: 200, payload: { token: userData.uuid } }
     },
     delete: ({ id }) => {
       const isDeleted = userService.delete(id)
       if (!isDeleted) {
         return {
           code: 400,
-          payload: { error: `Can't delete user with id ${id}` }
+          payload: { error: `Can't delete user with id ${id}` },
         }
       }
       return { code: 204 }
-    }
+    },
   }
 }
 

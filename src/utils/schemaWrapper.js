@@ -4,7 +4,7 @@ const schemaWrapper = ({
   body,
   querystring,
   headers,
-  successResponse
+  successResponse,
 }) => {
   const schema = {
     description,
@@ -14,20 +14,20 @@ const schemaWrapper = ({
         description: 'Bad response',
         type: 'object',
         properties: {
-          error: { type: 'string' }
-        }
+          error: { type: 'string' },
+        },
       },
       401: {
         description: 'Not authorized',
         type: 'object',
         properties: {
-          error: { type: 'string' }
-        }
-      }
-    }
+          error: { type: 'string' },
+        },
+      },
+    },
   }
-  if(headers){
-    schema.body = headers
+  if (headers) {
+    schema.headers = headers
   }
   if (body) {
     schema.body = body
@@ -42,8 +42,8 @@ const schemaWrapper = ({
       ...schema.response,
       200: {
         description: 'Successful response with no body',
-        type: 'null'
-      }
+        type: 'null',
+      },
     }
   }
   return schema

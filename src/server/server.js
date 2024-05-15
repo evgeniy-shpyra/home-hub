@@ -7,7 +7,6 @@ import swaggerConfig from './swaggerConfig.js'
 const server = async (opt = {}) => {
   const host = opt.host
   const port = opt.port
-  const cookieSecret = opt.cookieSecret
 
   const fastify = Fastify({ logger: true })
 
