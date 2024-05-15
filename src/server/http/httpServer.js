@@ -150,7 +150,7 @@ const initHttp = async (server, controllers, services) => {
   const mainHandler = async (req, reply, opt) => {
     const { handler, isRequiredAuth } = opt
     try {
-      const userData = verifyAuth(handler.authorization)
+      const userData = verifyAuth(req.headers.authorization)
 
       if (isRequiredAuth && !userData.isAuth) {
         reply.code(401).send({ error: ['Not authorized'] })

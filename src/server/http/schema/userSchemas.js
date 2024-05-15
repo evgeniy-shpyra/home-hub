@@ -5,6 +5,7 @@ const tags = ['User']
 export const createUserSchema = schemaWrapper({
   tags,
   description: 'Create a user',
+  isAuth: true,
   body: {
     type: 'object',
     properties: {
@@ -19,6 +20,7 @@ export const createUserSchema = schemaWrapper({
 export const deleteUserSchema = schemaWrapper({
   tags,
   description: 'Delete a user',
+  isAuth: true,
   successResponse: {
     204: {
       description: 'Successful response with no body',
@@ -30,15 +32,7 @@ export const deleteUserSchema = schemaWrapper({
 export const getUserSchema = schemaWrapper({
   tags,
   description: 'Get user data',
-  headers: {
-    type: 'object',
-    properties: {
-      authorization: {
-        type: 'string',
-      },
-    },
-    required: ['authorization'],
-  },
+  isAuth: true,
   successResponse: {
     200: {
       description: 'Successful response with no body',
@@ -53,6 +47,7 @@ export const getUserSchema = schemaWrapper({
 export const getUsersSchema = schemaWrapper({
   tags,
   description: 'Get all users data',
+  isAuth: true,
   successResponse: {
     200: {
       description: 'Successful response with no body',

@@ -5,6 +5,7 @@ const tags = ['Action']
 export const createActionSchema = schemaWrapper({
   tags,
   description: 'Create an action',
+  isAuth: true,
   body: {
     type: 'object',
     properties: {
@@ -18,6 +19,7 @@ export const createActionSchema = schemaWrapper({
 export const getActionsSchema = schemaWrapper({
   tags,
   description: 'Get all actions',
+  isAuth: true,
   successResponse: {
     200: {
       description: 'Successful response with no body',
@@ -38,6 +40,7 @@ export const getActionsSchema = schemaWrapper({
 export const deleteActionSchema = schemaWrapper({
   tags,
   description: 'Delete a action',
+  isAuth: true,
   successResponse: {
     204: {
       description: 'Successful response with no body',

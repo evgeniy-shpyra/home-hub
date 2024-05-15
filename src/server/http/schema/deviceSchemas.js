@@ -5,6 +5,7 @@ const tags = ['Device']
 export const createDeviceSchema = schemaWrapper({
   tags,
   description: 'Create a device',
+  isAuth: true,
   body: {
     type: 'object',
     properties: {
@@ -18,6 +19,7 @@ export const createDeviceSchema = schemaWrapper({
 export const getDevicesSchema = schemaWrapper({
   tags,
   description: 'Get all devices',
+  isAuth: true,
   successResponse: {
     200: {
       description: 'Successful response with no body',
@@ -37,6 +39,7 @@ export const getDevicesSchema = schemaWrapper({
 export const changeStatusDeviceSchema = schemaWrapper({
   tags,
   description: 'Change status of the device',
+  isAuth: true,
   body: {
     type: 'object',
     properties: {
@@ -50,6 +53,7 @@ export const changeStatusDeviceSchema = schemaWrapper({
 export const deleteDeviceSchema = schemaWrapper({
   tags,
   description: 'Delete a device',
+  isAuth: true,
   successResponse: {
     204: {
       description: 'Successful response with no body',

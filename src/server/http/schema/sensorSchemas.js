@@ -5,6 +5,7 @@ const tags = ['Sensor']
 export const createSensorSchema = schemaWrapper({
   tags,
   description: 'Create a sensor',
+  isAuth: true,
   body: {
     type: 'object',
     properties: {
@@ -19,6 +20,7 @@ export const createSensorSchema = schemaWrapper({
 export const getSensorsSchema = schemaWrapper({
   tags,
   description: 'Get all sensors',
+  isAuth: true,
   successResponse: {
     200: {
       description: 'Successful response with no body',
@@ -40,6 +42,7 @@ export const getSensorsSchema = schemaWrapper({
 export const deleteSensorSchema = schemaWrapper({
   tags,
   description: 'Delete a sensor',
+  isAuth: true,
   successResponse: {
     204: {
       description: 'Successful response with no body',

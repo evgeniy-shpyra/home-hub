@@ -3,7 +3,7 @@ const schemaWrapper = ({
   tags,
   body,
   querystring,
-  headers,
+  isAuth,
   successResponse,
 }) => {
   const schema = {
@@ -26,8 +26,16 @@ const schemaWrapper = ({
       },
     },
   }
-  if (headers) {
-    schema.headers = headers
+  if (isAuth) {
+    schema.headers = {
+      type: 'object',
+      properties: {
+        authorization: {
+          type: 'string',
+        },
+      },
+      required: ['authorization'],
+    }
   }
   if (body) {
     schema.body = body

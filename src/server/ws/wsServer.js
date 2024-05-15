@@ -14,9 +14,9 @@ const initWebsocket = async (server, controllers) => {
           const url = info.req.url
           let isVerified = false
 
-          if (url === '/ws/user') {
-            const id = info.req.headers.id
-            isVerified = userController.verifyClient({ id })
+          if (url.includes('/ws/user')) {          
+            const urlArr = url.split('/')
+            isVerified = userController.verifyClient({ uuid: urlArr[3] })
           }
 
           next(isVerified)
@@ -29,9 +29,11 @@ const initWebsocket = async (server, controllers) => {
   })
 
   const userSubscribes = {}
-  server.get('/ws/user', { websocket: true }, async (socket, request) => {
+  server.get('/ws/user/:token', { websocket: true }, async (socket, request) => {
     const { onConnect, onClose, onMessage, onError } = userController
-    const uuid = request.headers.id
+    const urlArr = request.url.split('/')
+    const uuid = urlArr[3]
+
     const subscribersUuid = uuid || crypto.randomUUID()
     try {
       await onConnect({ uuid })

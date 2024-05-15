@@ -5,6 +5,7 @@ const tags = ['System']
 export const toggleSystemSchema = schemaWrapper({
   tags,
   description: 'Toggle the system',
+  isAuth: true,
   body: {
     type: 'object',
     properties: {
@@ -16,5 +17,6 @@ export const toggleSystemSchema = schemaWrapper({
 })
 export const pingSystemSchema = schemaWrapper({
   tags,
+  isAuth: true,
   description: 'Ping the system'
 })

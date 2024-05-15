@@ -8,7 +8,7 @@ const server = async (opt = {}) => {
   const host = opt.host
   const port = opt.port
 
-  const fastify = Fastify({ logger: true })
+  const fastify = Fastify({ logger: false })
 
   await fastify.register(cors, {
     origin: '*',

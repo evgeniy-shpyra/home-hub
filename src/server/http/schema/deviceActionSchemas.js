@@ -5,6 +5,7 @@ const tags = ['Device&Action']
 export const createDeviceActionSchema = schemaWrapper({
   tags,
   description: 'Connect the device and the action',
+  isAuth: true,
   body: {
     type: 'object',
     properties: {
@@ -21,6 +22,7 @@ export const createDeviceActionSchema = schemaWrapper({
 export const bulkUpdateDeviceActionSchema = schemaWrapper({
   tags,
   description: 'Bulk connect the device and the action',
+  isAuth: true,
   body: {
     type: 'array',
     items: {
@@ -42,6 +44,7 @@ export const bulkUpdateDeviceActionSchema = schemaWrapper({
 export const getDevicesActionsSchema = schemaWrapper({
   tags,
   description: 'Get connected the devices with the actions',
+  isAuth: true,
   successResponse: {
     200: {
       description: 'Successful response with no body',
