@@ -3,6 +3,7 @@ const schemaWrapper = ({
   tags,
   body,
   querystring,
+  headers,
   successResponse
 }) => {
   const schema = {
@@ -24,6 +25,9 @@ const schemaWrapper = ({
         }
       }
     }
+  }
+  if(headers){
+    schema.body = headers
   }
   if (body) {
     schema.body = body

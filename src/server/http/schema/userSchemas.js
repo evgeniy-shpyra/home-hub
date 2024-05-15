@@ -30,6 +30,15 @@ export const deleteUserSchema = schemaWrapper({
 export const getUserSchema = schemaWrapper({
   tags,
   description: 'Get user data',
+  headers: { 
+    type: 'object',
+    properties: {
+      authorization: {
+        type: "string"
+      }
+    },
+    required: ['authorization']
+  },
   successResponse: {
     200: {
       description: 'Successful response with no body',
@@ -76,11 +85,7 @@ export const loginUserSchema = schemaWrapper({
   successResponse: {
     200: {
       description: 'Successful response with no body',
-      type: 'object',
-      properties: {
-        login: { type: 'string' },
-        password: { type: 'string' }
-      }
+      type: 'null',
     }
   }
 })

@@ -61,7 +61,7 @@ const initHttp = async (server, controllers, services) => {
       },
       'login': {
         handler: controllers.user.login,
-        schema: loginUserSchema,
+        // schema: loginUserSchema,
         isAuth: false,
       },
       'system/toggle': {
@@ -148,6 +148,7 @@ const initHttp = async (server, controllers, services) => {
     const { handler, isRequiredAuth } = opt
     try {
       const cookies = parseCookies(req.cookies, req.unsignCookie)
+      console.log(req.cookies)
       const userData = verifyAuth(cookies)
 
       if (isRequiredAuth && !userData.isAuth) {
@@ -164,16 +165,15 @@ const initHttp = async (server, controllers, services) => {
       const params = req.params || {}
 
       const response = await handler({ ...body, ...params }, user)
-
       if (response && response.user) {
         reply.setCookie('id', response.user.uuid, {
-          signed: true,
-          path: '/',
+          // signed: true, 
+          path: "/"
         })
       } else if (user) {
         reply.setCookie('id', user.uuid, {
-          signed: true,
-          path: '/',
+          // signed: true,
+          path: "/"
         })
       }
 

@@ -1,5 +1,4 @@
 import Fastify from 'fastify'
-import fastifyCookie from '@fastify/cookie'
 import cors from '@fastify/cors'
 import swagger from '@fastify/swagger'
 import swaggerUi from '@fastify/swagger-ui'
@@ -10,24 +9,16 @@ const server = async (opt = {}) => {
   const port = opt.port
   const cookieSecret = opt.cookieSecret
 
-  const fastify = Fastify({ logger: false })
+  const fastify = Fastify({ logger: true })
 
   await fastify.register(cors, {
-    origin: ['*', `http://${host}`]
+    origin: '*',
   })
 
   // Swagger
   await fastify.register(swagger, {})
   await fastify.register(swaggerUi, swaggerConfig)
 
-  fastify.register(fastifyCookie, {
-    secret: cookieSecret,
-    hook: 'onRequest',
-    parseOptions: {
-      httpOnly: true,
-      expires: new Date(Date.now() + 24 * 60 * 60 * 1000)
-    }
-  })
 
   return {
     start: async () => {
