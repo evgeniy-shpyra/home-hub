@@ -10,7 +10,7 @@ const userModel = (db) => {
       password VARCHAR(100) NOT NULL,
       login VARCHAR(30) NOT NULL,
       isOnline BOOLEAN NOT NULL,
-      lastOnlineTime DATETIME
+      lastOnlineAt DATETIME
     )  
   `)
 

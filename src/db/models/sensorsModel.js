@@ -8,21 +8,21 @@ const sensorModel = (db) => {
     CREATE TABLE IF NOT EXISTS ${tableName} (
       id INTEGER PRIMARY KEY,
       name TEXT UNIQUE NOT NULL,
-      action_id NUMBER NOT NULL,
+      actionId NUMBER NOT NULL,
       status BOOLEAN NOT NULL,
-      lastActionAt DATETIME,
-      FOREIGN KEY (action_id) REFERENCES ${actionTableName}(id) ON DELETE CASCADE
+      lastActiveAt DATETIME,
+      FOREIGN KEY (actionId) REFERENCES ${actionTableName}(id) ON DELETE CASCADE
     )  
   `)
 
   return {
-    create: ({ name, action_id }) => {
+    create: ({ name, actionId }) => {
       return queryWrapper(() => {
         const createQuery = db.prepare(
-          `INSERT INTO ${tableName} (name, action_id, status) VALUES (?, ?, 0);`
+          `INSERT INTO ${tableName} (name, actionId, status) VALUES (?, ?, 0);`
         )
         db.transaction(() => {
-          createQuery.run(name, action_id)
+          createQuery.run(name, actionId)
         })()
       })
     },

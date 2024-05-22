@@ -6,7 +6,6 @@ const actionModel = (db) => {
   db.exec(`
     CREATE TABLE IF NOT EXISTS ${tableName} (
       id INTEGER PRIMARY KEY,
-      lastActiveTime DATETIME,
       name TEXT UNIQUE NOT NULL
     )  
   `)

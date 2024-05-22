@@ -10,7 +10,7 @@ const deviceModel = (db) => {
     CREATE TABLE IF NOT EXISTS ${deviceTableName} (
       id INTEGER PRIMARY KEY,
       name TEXT UNIQUE NOT NULL,
-      lastActionAt DATETIME
+      lastActiveAt DATETIME
     )  
   `)
 
