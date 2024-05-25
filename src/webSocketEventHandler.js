@@ -3,7 +3,7 @@ import {
   deviceStatusSetBusEvent,
   changeDeviceStatusBusEvent,
   pingSystemBusEvent,
-  deviceStatusGetBusEvent
+  deviceStatusGetBusEvent,
 } from './bus/busEvents.js'
 
 const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
@@ -28,7 +28,7 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
       }
       devicesForWriting.push({
         ...device,
-        sensorStatus: !!device.sensorStatus
+        sensorStatus: !!device.sensorStatus,
       })
     }
 
@@ -36,15 +36,15 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
       const payloadForDevice = {
         deviceStatus: device.deviceStatus ? true : false,
         sensorStatus: device.sensorStatus,
-        isAction: true
+        isAction: true,
       }
-     
+
       deviceMqttHandler.setStatus(payloadForDevice, device.deviceName)
     }
 
     const payloadForUser = {
       action: 'sensorStatus',
-      payload: data
+      payload: data,
     }
     userWsHandler(payloadForUser)
   })
@@ -73,23 +73,22 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
       {
         deviceStatus: deviceMaxPriority.deviceStatus ? true : false,
         sensorStatus: deviceMaxPriority.sensorStatus,
-        isAction: true
+        isAction: true,
       },
       deviceMaxPriority.name
     )
 
     userWsHandler({
       action: 'deviceConDisc',
-      payload: device
+      payload: device,
     })
   })
 
   // on changed status of device
   bus.on(deviceStatusSetBusEvent, (data) => {
-   
     const payloadForUser = {
       action: 'deviceStatus',
-      payload: data
+      payload: data,
     }
 
     userWsHandler(payloadForUser)
@@ -104,7 +103,7 @@ const webSocketEventHandler = (wsHandlers, mqttHandlers, bus, services) => {
   bus.on(changeDeviceStatusBusEvent, (device) => {
     const payloadForDevice = {
       deviceStatus: device.status,
-      isAction: false
+      isAction: false,
     }
     deviceMqttHandler.setStatus(payloadForDevice, device.name)
   })
