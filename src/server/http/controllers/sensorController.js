@@ -2,8 +2,8 @@ const sensorController = (services) => {
   const sensorService = services.sensor
 
   return {
-    create: ({ name, action_id }) => {
-      sensorService.create({ name, action_id })
+    create: ({ name, actionId }) => {
+      sensorService.create({ name, actionId })
       return { code: 200 }
     },
     getAll: () => {
