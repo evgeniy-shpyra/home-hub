@@ -20,9 +20,9 @@ const sensorService = (dbHandlers, bus) => {
       const sensorDto = result.payload.map((s) => ({
         id: s.id,
         name: s.name,
-        action_id: s.action_id,
+        actionId: s.actionId,
         status: !!s.status,
-        connectedAt: s.connectedAt
+        lastActiveAt: s.lastActiveAt
       }))
 
       return sensorDto

@@ -84,7 +84,7 @@ const deviceModel = (db) => {
                        INNER JOIN ${actionTableName} as action
                        ON action.id = actionDevice.actionId
                        INNER JOIN ${sensorTableName} as sensor
-                       ON sensor.action_id = action.id`
+                       ON sensor.actionId = action.id`
         const result = db.prepare(query).all()
         return result
       })
@@ -101,7 +101,7 @@ const deviceModel = (db) => {
                        INNER JOIN ${actionTableName} as action
                        ON action.id = actionDevice.actionId
                        INNER JOIN ${sensorTableName} as sensor
-                       ON sensor.action_id = action.id
+                       ON sensor.actionId = action.id
                        WHERE sensor.status = 1 AND deviceId = ?;`
         const result = db.prepare(query).all(deviceId)
         return result

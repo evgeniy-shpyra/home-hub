@@ -86,7 +86,7 @@ const sensorModel = (db) => {
           )
         }
         db.transaction(() => {
-          createQuery.run(status, id)
+          updateQuery.run(status, id)
         })()
       })
     }
