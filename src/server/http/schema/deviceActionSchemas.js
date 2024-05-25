@@ -12,11 +12,11 @@ export const createDeviceActionSchema = schemaWrapper({
       deviceId: { type: 'number' },
       actionId: { type: 'number' },
       priority: { type: 'number' },
-      deviceStatus: { type: 'boolean' },
+      deviceStatus: { type: 'boolean' }
     },
     required: ['deviceId', 'actionId', 'priority', 'deviceStatus'],
-    additionalProperties: false,
-  },
+    additionalProperties: false
+  }
 })
 
 export const bulkUpdateDeviceActionSchema = schemaWrapper({
@@ -33,12 +33,12 @@ export const bulkUpdateDeviceActionSchema = schemaWrapper({
         actionId: { type: 'number' },
         priority: { type: 'number' },
         deviceStatus: { type: 'boolean' },
-        isDelete: { type: 'boolean' },
+        isDelete: { type: 'boolean' }
       },
-      additionalProperties: false,
+      additionalProperties: false
     },
-    minItems: 1,
-  },
+    minItems: 1
+  }
 })
 
 export const getDevicesActionsSchema = schemaWrapper({
@@ -57,8 +57,8 @@ export const getDevicesActionsSchema = schemaWrapper({
           actionId: { type: 'number' },
           priority: { type: 'number' },
           deviceStatus: { type: 'boolean' }
-        },
-      },
-    },
-  },
+        }
+      }
+    }
+  }
 })

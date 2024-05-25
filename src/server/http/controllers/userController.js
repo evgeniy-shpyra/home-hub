@@ -30,11 +30,11 @@ const userController = (services) => {
       if (!isDeleted) {
         return {
           code: 400,
-          payload: { error: `Can't delete user with id ${id}` },
+          payload: { error: `Can't delete user with id ${id}` }
         }
       }
       return { code: 204 }
-    },
+    }
   }
 }
 

@@ -8,7 +8,7 @@ const userService = (dbHandlers, bus) => {
     isAuth: (uuid) => {
       const resultCount = User.getCount()
       if (!resultCount.success) {
-        throw new Error(result.message)
+        throw new Error(resultCount.message)
       }
       if (resultCount.payload === 0) {
         return { isAuth: true }
@@ -17,7 +17,7 @@ const userService = (dbHandlers, bus) => {
       }
       const resultUser = User.getByUuid(uuid)
       if (!resultUser.success) {
-        throw new Error(result.message)
+        throw new Error(resultUser.message)
       }
 
       if (resultUser.payload) {
@@ -36,7 +36,7 @@ const userService = (dbHandlers, bus) => {
     login: ({ login, password }) => {
       const resultCount = User.getCount()
       if (!resultCount.success) {
-        throw new Error(result.message)
+        throw new Error(resultCount.message)
       }
 
       if (resultCount.payload === 0) {

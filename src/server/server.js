@@ -11,13 +11,12 @@ const server = async (opt = {}) => {
   const fastify = Fastify({ logger: false })
 
   await fastify.register(cors, {
-    origin: '*',
+    origin: '*'
   })
 
   // Swagger
   await fastify.register(swagger, {})
   await fastify.register(swaggerUi, swaggerConfig)
-
 
   return {
     start: async () => {

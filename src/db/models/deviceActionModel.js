@@ -42,7 +42,7 @@ const deviceActionModel = (db) => {
     bulkCreate: function (actionsDevices) {
       return queryWrapper(() => {
         let valuesString = []
-        let values = []
+        const values = []
         for (const ad of actionsDevices) {
           valuesString.push('(?, ?, ?, ?)')
 
@@ -81,7 +81,7 @@ const deviceActionModel = (db) => {
         const result = db.prepare(query).run()
         return true
       })
-    },
+    }
   }
 }
 

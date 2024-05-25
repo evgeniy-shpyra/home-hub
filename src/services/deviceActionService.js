@@ -7,7 +7,7 @@ const deviceActionService = (dbHandlers, bus) => {
         actionId,
         deviceId,
         priority,
-        deviceStatus: deviceStatus ? 1 : 0,
+        deviceStatus: deviceStatus ? 1 : 0
       })
       if (!result.success) {
         throw new Error(result.error)
@@ -18,7 +18,7 @@ const deviceActionService = (dbHandlers, bus) => {
       for (const key in devisesActions) {
         const item = {
           ...devisesActions[key],
-          deviceStatus: devisesActions[key].deviceStatus ? 1 : 0,
+          deviceStatus: devisesActions[key].deviceStatus ? 1 : 0
         }
 
         if (item.id) {
@@ -72,10 +72,10 @@ const deviceActionService = (dbHandlers, bus) => {
 
       const deviceActionDto = result.payload.map((da) => ({
         ...da,
-        status: !!da.status,
+        status: !!da.status
       }))
       return deviceActionDto
-    },
+    }
   }
 }
 

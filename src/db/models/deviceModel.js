@@ -25,6 +25,16 @@ const deviceModel = (db) => {
         })()
       })
     },
+    updateActiveTime: (id) => {
+      return queryWrapper(() => {
+        const updateQuery = db.prepare(
+          `UPDATE ${tableName} SET lastActiveAt = CURRENT_TIMESTAMP WHERE id = ?;`
+        )
+        db.transaction(() => {
+          updateQuery.run(id)
+        })()
+      })
+    },
     getAll: () => {
       return queryWrapper(() => {
         const query = `SELECT * FROM ${deviceTableName};`

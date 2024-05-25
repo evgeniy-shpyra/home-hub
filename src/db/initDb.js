@@ -5,9 +5,9 @@ import userModel from './models/userModel.js'
 import sensorModel from './models/sensorsModel.js'
 import deviceActionModel from './models/deviceActionModel.js'
 import path from 'node:path'
+import setupDb from './setupDb.js'
 
 const initDb = () => {
-
   const db = new Database(path.resolve('./db/home.db'))
 
   const Device = deviceModel(db)
@@ -18,7 +18,7 @@ const initDb = () => {
 
   const models = { Device, Action, User, Sensor, DeviceAction }
 
-  // setupDb(models)
+  setupDb(models)
 
   return {
     close: () => {

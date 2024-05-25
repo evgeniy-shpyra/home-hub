@@ -36,7 +36,6 @@ export const getActionsSchema = schemaWrapper({
   }
 })
 
-
 export const deleteActionSchema = schemaWrapper({
   tags,
   description: 'Delete a action',

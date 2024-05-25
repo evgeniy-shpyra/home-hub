@@ -28,12 +28,12 @@ const app = async () => {
 
   const alarmApi = initAlarmApi(config.mainServer, 5_000)
 
+  // proxy server air alarm
   alarmApi.subscribe('alarm', (data) => {
-    // services.sensor.changeStatus({
-    //   id: 1,
-    //   // status: data.isDanger,
-    //   status: true,
-    // })
+    services.sensor.changeStatus({
+      id: -1,
+      status: data.isDanger,
+    })
   })
 
   webSocketEventHandler(wsHandlers, mqtt.handlers, bus, services)

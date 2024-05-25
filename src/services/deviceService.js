@@ -1,5 +1,4 @@
 import { changeDeviceStatusBusEvent } from '../bus/busEvents.js'
-import { createHash } from '../utils/hash.js'
 
 const deviceService = (dbHandlers, bus) => {
   const { Device } = dbHandlers
@@ -55,6 +54,13 @@ const deviceService = (dbHandlers, bus) => {
     changeStatus: function ({ id, status }) {
       const device = this.getById(id)
       if (!device) throw new Error("Device isn't exist")
+
+      if (status) {
+        const result = Device.updateActiveTime(id)
+        if (!result.success) {
+          console.error("Can't updateActiveTime of device")
+        }
+      }
 
       bus.emit(changeDeviceStatusBusEvent, {
         name: device.name,

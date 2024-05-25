@@ -13,7 +13,7 @@ const deviceActionController = (services) => {
     bulkUpdate: (devicesActions) => {
       deviceActionService.bulkUpdate(devicesActions)
       return { code: 200 }
-    },
+    }
   }
 }
 

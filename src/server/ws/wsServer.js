@@ -14,7 +14,7 @@ const initWebsocket = async (server, controllers) => {
           const url = info.req.url
           let isVerified = false
 
-          if (url.includes('/ws/user')) {          
+          if (url.includes('/ws/user')) {
             const urlArr = url.split('/')
             isVerified = userController.verifyClient({ uuid: urlArr[3] })
           }

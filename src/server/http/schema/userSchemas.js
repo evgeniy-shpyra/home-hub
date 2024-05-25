@@ -10,11 +10,11 @@ export const createUserSchema = schemaWrapper({
     type: 'object',
     properties: {
       login: { type: 'string' },
-      password: { type: 'string' },
+      password: { type: 'string' }
     },
     required: ['login', 'password'],
-    additionalProperties: false,
-  },
+    additionalProperties: false
+  }
 })
 
 export const deleteUserSchema = schemaWrapper({
@@ -24,9 +24,9 @@ export const deleteUserSchema = schemaWrapper({
   successResponse: {
     204: {
       description: 'Successful response with no body',
-      type: 'null',
-    },
-  },
+      type: 'null'
+    }
+  }
 })
 
 export const getUserSchema = schemaWrapper({
@@ -38,10 +38,10 @@ export const getUserSchema = schemaWrapper({
       description: 'Successful response with no body',
       type: 'object',
       properties: {
-        login: { type: 'string' },
-      },
-    },
-  },
+        login: { type: 'string' }
+      }
+    }
+  }
 })
 
 export const getUsersSchema = schemaWrapper({
@@ -58,11 +58,11 @@ export const getUsersSchema = schemaWrapper({
           id: { type: 'string' },
           login: { type: 'string' },
           isOnline: { type: 'boolean' },
-          lastOnlineTime: { type: 'string' },
-        },
-      },
-    },
-  },
+          lastOnlineTime: { type: 'string' }
+        }
+      }
+    }
+  }
 })
 export const loginUserSchema = schemaWrapper({
   tags,
@@ -71,18 +71,18 @@ export const loginUserSchema = schemaWrapper({
     type: 'object',
     properties: {
       login: { type: 'string' },
-      password: { type: 'string' },
+      password: { type: 'string' }
     },
     required: ['login', 'password'],
-    additionalProperties: false,
+    additionalProperties: false
   },
   successResponse: {
     200: {
       description: 'Successful response with no body',
       type: 'object',
       properties: {
-        token: { type: 'string' },
-      },
-    },
-  },
+        token: { type: 'string' }
+      }
+    }
+  }
 })

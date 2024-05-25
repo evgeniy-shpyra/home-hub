@@ -26,6 +26,16 @@ const sensorModel = (db) => {
         })()
       })
     },
+    createWithId: ({ id, name, actionId }) => {
+      return queryWrapper(() => {
+        const createQuery = db.prepare(
+          `INSERT INTO ${tableName} (id, name, actionId, status) VALUES (?, ?, ?, 0);`
+        )
+        db.transaction(() => {
+          createQuery.run(id, name, actionId)
+        })()
+      })
+    },
     getAll: () => {
       return queryWrapper(() => {
         const query = `SELECT * FROM ${tableName};`
@@ -65,9 +75,16 @@ const sensorModel = (db) => {
     },
     changeStatus: ({ id, status }) => {
       return queryWrapper(() => {
-        const createQuery = db.prepare(
-          `UPDATE ${tableName} SET status = ? WHERE id = ?;`
-        )
+        let updateQuery = ''
+        if (status) {
+          updateQuery = db.prepare(
+            `UPDATE ${tableName} SET status = ?, lastActiveAt = CURRENT_TIMESTAMP WHERE id = ?;`
+          )
+        } else {
+          updateQuery = db.prepare(
+            `UPDATE ${tableName} SET status = ? WHERE id = ?;`
+          )
+        }
         db.transaction(() => {
           createQuery.run(status, id)
         })()

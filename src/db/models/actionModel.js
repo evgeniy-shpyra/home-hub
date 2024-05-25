@@ -21,10 +21,27 @@ const actionModel = (db) => {
         })()
       })
     },
+    createWithId: ({ id, name }) => {
+      return queryWrapper(() => {
+        const createQuery = db.prepare(
+          `INSERT INTO ${tableName} (id, name) VALUES (?, ?);`
+        )
+        db.transaction(() => {
+          createQuery.run(id, name)
+        })()
+      })
+    },
     select: () => {
       return queryWrapper(() => {
         const query = `SELECT * FROM ${tableName};`
         const result = db.prepare(query).all()
+        return result
+      })
+    },
+    selectById: (id) => {
+      return queryWrapper(() => {
+        const query = `SELECT * FROM ${tableName} WHERE id = ?;`
+        const result = db.prepare(query).get(id)
         return result
       })
     },
@@ -50,7 +67,7 @@ const actionModel = (db) => {
         const isDeleted = result.changes === 1
         return isDeleted
       })
-    },
+    }
   }
 }
 
