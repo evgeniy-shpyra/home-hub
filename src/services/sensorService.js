@@ -5,8 +5,8 @@ const sensorService = (dbHandlers, bus) => {
   const { Sensor } = dbHandlers
 
   return {
-    create: ({ name, action_id }) => {
-      const result = Sensor.create({ name, action_id })
+    create: ({ name, actionId }) => {
+      const result = Sensor.create({ name, actionId })
       if (!result.success) {
         throw new Error(result.error)
       }
