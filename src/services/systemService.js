@@ -7,7 +7,7 @@ function systemService(dbHandlers, bus) {
     ping: () => {
       bus.emit(pingSystemBusEvent)
     },
-    turnOffSystem: () => {
+    turnOffSystem: function () {
       const result = Config.update({
         name: 'system',
         data: JSON.stringify({ isOn: false }),
@@ -15,8 +15,9 @@ function systemService(dbHandlers, bus) {
       if (!result.success) {
         throw new Error(result.error)
       }
+      this.ping()
     },
-    turnOnSystem: () => {
+    turnOnSystem: function () {
       const result = Config.update({
         name: 'system',
         data: JSON.stringify({ isOn: true }),
@@ -24,6 +25,7 @@ function systemService(dbHandlers, bus) {
       if (!result.success) {
         throw new Error(result.error)
       }
+      this.ping()
     },
     getSystemStatus: () => {
       const result = Config.selectByName('system')
