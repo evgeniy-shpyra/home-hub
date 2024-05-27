@@ -6,6 +6,7 @@ import sensorModel from './models/sensorsModel.js'
 import deviceActionModel from './models/deviceActionModel.js'
 import path from 'node:path'
 import setupDb from './setupDb.js'
+import configModel from './models/configModel.js'
 
 const initDb = () => {
   const db = new Database(path.resolve('./db/home.db'))
@@ -15,8 +16,9 @@ const initDb = () => {
   const DeviceAction = deviceActionModel(db)
   const User = userModel(db)
   const Sensor = sensorModel(db)
+  const Config = configModel(db)
 
-  const models = { Device, Action, User, Sensor, DeviceAction }
+  const models = { Device, Action, User, Sensor, DeviceAction, Config }
 
   setupDb(models)
 
@@ -25,7 +27,7 @@ const initDb = () => {
       db.close()
       console.log('Db has been stopped')
     },
-    models
+    models,
   }
 }
 

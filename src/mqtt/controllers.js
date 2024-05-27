@@ -1,11 +1,12 @@
 import {
   deviceStatusSetBusEvent,
-  deviceStatusGetBusEvent
+  deviceStatusGetBusEvent,
 } from '../bus/busEvents.js'
 
 const controller = async (client, services, bus) => {
   const deviceService = services.device
   const sensorService = services.sensor
+  const systemService = services.system
 
   await client.subscribe('device/+/status/#', (err) => {
     if (!err) {
@@ -35,7 +36,7 @@ const controller = async (client, services, bus) => {
 
     bus.emit(deviceStatusSetBusEvent, {
       id: device.id,
-      status: payload.message.status
+      status: payload.message.status,
     })
   }
   const onDeviceStatusGet = async (deviceName) => {
@@ -55,9 +56,13 @@ const controller = async (client, services, bus) => {
     const sensor = sensorService.getByName(payload.name)
     if (!sensor) return
 
+    const systemStatus = systemService.getSystemStatus()
+
+    if (!systemStatus) return
+
     sensorService.changeStatus({
       id: sensor.id,
-      status: payload.message.status
+      status: payload.message.status,
     })
   }
 

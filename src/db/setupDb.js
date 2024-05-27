@@ -2,6 +2,7 @@ const setupDb = (models) => {
   try {
     const Action = models.Action
     const Sensor = models.Sensor
+    const Config = models.Config
 
     // create air alarm action
     const resultAlarmAction = Action.selectById(-1)
@@ -28,6 +29,21 @@ const setupDb = (models) => {
         id: -1,
         name: 'Повітряна тривога',
         actionId: -1
+      })
+      if (!resultInserting.success) {
+        throw new Error("Can't insert sensor fro air alarm")
+      }
+    }
+
+    // Create config
+    const resultConfigSelecting = Config.selectByName("system")
+    if (!resultConfigSelecting.success) {
+      throw new Error("Can't select system config")
+    }
+    if (!resultConfigSelecting.payload) {
+      const resultInserting = Config.create({
+        name: 'system',
+        data: JSON.stringify({isOn: true})
       })
       if (!resultInserting.success) {
         throw new Error("Can't insert sensor fro air alarm")
